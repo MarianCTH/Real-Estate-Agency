@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\User; // Assuming you are using User model for agents
 
 class AgentController extends Controller
 {
-    public function show($id)
+    public function index()
     {
-        $agent = User::findOrFail($id);
-        return view('pages.agents.show', compact('agent'));
+        // Get all users with the type 'Persoană fizică'
+        $agents = User::where('type', 'Persoană fizică')->paginate(10);
+        $title = 'Agenți imobiliari';
+
+        // Return a view with the agents
+        return view('pages.agents.index', compact('agents', 'title'));
     }
 }

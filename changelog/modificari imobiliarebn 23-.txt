@@ -7,4 +7,4 @@
 7. Am adaugat posibilitatea de a adauga proprietati la favorite
 8. Am facut pagina de proprietati favorite in panoul de utilizator
 9. Am adugat la pagina de vizualizare proprietate: alte proprietati de la agent si locatia proprietatii pe harta
-10. Posibilitate intrare pe pagina de toate proprietatile de la agent
+10. Posibilitate intrare pe pagina de alte proprietatile de la agent

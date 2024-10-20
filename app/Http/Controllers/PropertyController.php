@@ -105,15 +105,39 @@ class PropertyController extends Controller
 
         return view('pages.properties.show', compact('properties', 'property', 'images', 'otherProperties'));
     }
-    public function userProperties(User $user)
+    public function userProperties(User $user, Request $request)
     {
-        // Get all properties listed by this user
-        $properties = Property::where('user_id', $user->id)->paginate(10);
-        $title = 'Proprietăți listate';
+        // Default sorting (normal)
+        $sortBy = $request->input('sortby', 'normal');
 
-        // Return a view with the user's properties
-        return view('pages.properties.user-properties', compact('title', 'properties', 'user'));
+        // Query properties based on the user ID
+        $propertiesQuery = Property::where('user_id', $user->id);
+
+        // Apply sorting logic based on the selected option
+        switch ($sortBy) {
+            case '1': // Most viewed
+                $propertiesQuery->orderBy('views', 'desc');
+                break;
+            case '2': // Price ascending
+                $propertiesQuery->orderBy('price', 'asc');
+                break;
+            case '3': // Price descending
+                $propertiesQuery->orderBy('price', 'desc');
+                break;
+            default:
+                // No sorting applied, or normal sorting
+                $propertiesQuery->latest();
+                break;
+        }
+
+        // Paginate the results
+        $properties = $propertiesQuery->paginate(10);
+
+        // Return the view with sorted properties
+        $title = 'Proprietăți listate';
+        return view('pages.properties.user-properties', compact('title', 'properties', 'user', 'sortBy'));
     }
+
 
     public function create()
     {

@@ -1,24 +1,30 @@
 <li><a href="{{ route('welcome') }}">Acasă</a></li>
-<li><a href="{{ route('properties') }}">Proprietăți</a></li>
-<li><a href="#">De vânzare</a>
+<li><a href="#">Proprietăți</a>
     <ul>
-        <li><a href="#">Apartamente</a></li>
-        <li><a href="#">Garsoniere</a></li>
-        <li><a href="#">Case și vile</a></li>
-        <li><a href="#">Terenuri</a></li>
-        <li><a href="#">Spații comerciale</a></li>
+        <li><a href="{{ route('properties') }}">Toate proprietățile</a></li>
+
+        <li><a href="#">De vânzare</a>
+            <ul>
+                <li><a href="#">Apartamente</a></li>
+                <li><a href="#">Garsoniere</a></li>
+                <li><a href="#">Case și vile</a></li>
+                <li><a href="#">Terenuri</a></li>
+                <li><a href="#">Spații comerciale</a></li>
+            </ul>
+        </li>
+        <li><a href="#">De închiriat</a>
+            <ul>
+                <li><a href="#">Apartamente</a></li>
+                <li><a href="#">Garsoniere</a></li>
+                <li><a href="#">Case și vile</a></li>
+                <li><a href="#">Terenuri</a></li>
+                <li><a href="#">Spații comerciale</a></li>
+                <li><a href="#">Birouri</a></li>
+            </ul>
+        </li>
     </ul>
 </li>
-<li><a href="#">De închiriat</a>
-    <ul>
-        <li><a href="#">Apartamente</a></li>
-        <li><a href="#">Garsoniere</a></li>
-        <li><a href="#">Case și vile</a></li>
-        <li><a href="#">Terenuri</a></li>
-        <li><a href="#">Spații comerciale</a></li>
-        <li><a href="#">Birouri</a></li>
-    </ul>
-</li>
+<li><a href="{{ route('agents') }}">Agenți</a></li>
 <li><a href="{{ route('contact') }}">Contact</a></li>
 <li class="d-none d-xl-none d-block d-lg-block"><a href="{{ route('login') }}">Intră în cont</a></li>
 <li class="d-none d-xl-none d-block d-lg-block"><a href="{{ route('register') }}">Cont nou</a></li>

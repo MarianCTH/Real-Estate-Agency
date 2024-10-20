@@ -21,7 +21,8 @@
 
     <section class="faq service-details bg-white">
         <div class="container">
-            <h3 class="mb-5">Politica de cookie-uri</h3>
+            <h3 class="mb-5">Politica de confidențialitate
+            </h3>
             <div class="row">
                 <div class="col-lg-12 col-md-12">
                     <ul class="accordion accordion-1 one-open">

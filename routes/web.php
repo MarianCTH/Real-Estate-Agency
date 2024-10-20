@@ -88,6 +88,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/favorites/{property}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 
 });
+Route::get('/agents', [AgentController::class, 'index'])->name('agents');
+
 Route::get('/user/{user}/properties', [PropertyController::class, 'userProperties'])->name('user.properties');
 
 Route::get('/properties', [PropertyController::class, 'index'])->name('properties');
@@ -104,7 +106,6 @@ Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subsc
 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-Route::get('/agents/{id}', [AgentController::class, 'show'])->name('pages.agents.show');
 Route::get('/cookie-policy', [CookiePolicyController::class, 'show'])->name('cookie.policy');
 Route::get('/confidentiality-policy', [ConfidentialityPolicyController::class, 'show'])->name('confidentiality.policy');
 
