@@ -107,7 +107,7 @@
             <div class="second-footer">
                 <div class="container">
                     <p>2024 © Copyright <a href="#"> {{ config('app.name') }}</a>. Toate drepturile rezervate.</p>
-                    <p>Made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://web.czrsolutions.ro/">CZRSolutions</a></p>
+                    <p>Dezvoltat de către <a href="https://web.czrsolutions.ro/">CZRSolutions</a></p>
                 </div>
             </div>
         </footer>

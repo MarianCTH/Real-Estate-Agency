@@ -171,7 +171,7 @@
                         <!-- end author-verified-badge -->
                         <div class="sidebar">
                             <div class="widget-boxed mt-33 mt-5">
-                                <div class="widget-boxed-header">
+                                <div>
                                     <h4>Informații Agent</h4>
                                 </div>
                                 <div class="widget-boxed-body">
@@ -202,10 +202,10 @@
                                 </div>
                             </div>
                             <div class="main-search-field-2">
-                                <div class="widget-boxed mt-5">
-                                    <div class="widget-boxed mt-5">
-                                        <div class="widget-boxed-header mb-5">
-                                            <h4>Anunțuri agent</h4>
+                                <div class="widget-boxed">
+                                    <div class="widget-boxed">
+                                        <div class="widget-boxed-header">
+                                            <h4>Alte anunțuri de la {{ $property->user->name }}</h4>
                                             <a href="{{ route('user.properties', $property->user->id) }}">Vezi toate
                                                 anunțurile</a>
 
@@ -219,7 +219,7 @@
                                                                 class="listing-img-container">
                                                                 <div class="listing-badges">
                                                                     <span
-                                                                        class="featured">{{ $otherProperty->price }}</span>
+                                                                        class="featured">{{ $otherProperty->price }} €</span>
                                                                     <span>{{ $otherProperty->status }}</span>
                                                                 </div>
                                                                 <div class="listing-img-content">
@@ -227,19 +227,19 @@
                                                                         class="listing-compact-title">{{ $otherProperty->title }}
                                                                         <i></i></span>
                                                                     <ul class="listing-hidden-content">
-                                                                        <li>Area <span>{{ $otherProperty->size }} sq
-                                                                                ft</span></li>
-                                                                        <li>Rooms <span>{{ $otherProperty->rooms }}</span>
-                                                                        </li>
-                                                                        <li>Beds
+                                                                        <li>Suprafață <span>{{ $otherProperty->size }} m2
+                                                                            </span></li>
+                                                                        <li>Camere
                                                                             <span>{{ $otherProperty->bedrooms }}</span>
                                                                         </li>
-                                                                        <li>Baths
-                                                                            <span>{{ $otherProperty->bathrooms }}</span>
-                                                                        </li>
+                                                                        @if ($otherProperty->bathrooms > 0)
+                                                                            <li>Băi
+                                                                                <span>{{ $otherProperty->bathrooms }}</span>
+                                                                            </li>
+                                                                        @endif
                                                                     </ul>
                                                                 </div>
-                                                                <img src="{{ asset('img/properties/' . $property->id . '/' . $property->image) }}"
+                                                                <img src="{{ asset('img/properties/' . $otherProperty->id . '/' . $otherProperty->image) }}"
                                                                     alt="{{ $otherProperty->title }}">
                                                             </a>
                                                         </div>
@@ -347,40 +347,40 @@
         });
     </script>
 
-<script>
-    if ($('#map-contact').length) {
-        // Get property coordinates from the server-side variables
-        var lat = {{ $property->latitude }};
-        var lng = {{ $property->longitude }};
+    <script>
+        if ($('#map-contact').length) {
+            // Get property coordinates from the server-side variables
+            var lat = {{ $property->latitude }};
+            var lng = {{ $property->longitude }};
 
-        // Initialize the map with dynamic center based on property coordinates
-        var map = L.map('map-contact', {
-            zoom: 15,
-            maxZoom: 60,
-            tap: false,
-            gestureHandling: true,
-            center: [lat, lng]  // Set center using dynamic latitude and longitude
-        });
+            // Initialize the map with dynamic center based on property coordinates
+            var map = L.map('map-contact', {
+                zoom: 15,
+                maxZoom: 60,
+                tap: false,
+                gestureHandling: true,
+                center: [lat, lng] // Set center using dynamic latitude and longitude
+            });
 
-        map.scrollWheelZoom.disable();
+            map.scrollWheelZoom.disable();
 
-        var Hydda_Full = L.tileLayer('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png', {
-            scrollWheelZoom: false,
-            attribution: ''
-        }).addTo(map);
+            var Hydda_Full = L.tileLayer('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png', {
+                scrollWheelZoom: false,
+                attribution: ''
+            }).addTo(map);
 
-        var icon = L.divIcon({
-            html: '<i class="fa fa-building"></i>',
-            iconSize: [50, 50],
-            iconAnchor: [50, 50],
-            popupAnchor: [-20, -42]
-        });
+            var icon = L.divIcon({
+                html: '<i class="fa fa-building"></i>',
+                iconSize: [50, 50],
+                iconAnchor: [50, 50],
+                popupAnchor: [-20, -42]
+            });
 
-        // Add a marker at the dynamic coordinates
-        var marker = L.marker([lat, lng], {
-            icon: icon
-        }).addTo(map);
-    }
-</script>
+            // Add a marker at the dynamic coordinates
+            var marker = L.marker([lat, lng], {
+                icon: icon
+            }).addTo(map);
+        }
+    </script>
 
 @endsection

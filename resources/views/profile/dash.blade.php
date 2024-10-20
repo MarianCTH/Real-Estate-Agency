@@ -2,106 +2,89 @@
 @section('title', $title)
 
 @section('content')
-<div class="dashborad-box stat bg-white">
-    <h4 class="title">Administrează Tabloul de Bord</h4>
-    <div class="section-body">
-        <div class="row">
-            <div class="col-lg-3 col-md-6 col-xs-12 dar pro mr-3">
-                <div class="item">
-                    <div class="icon">
-                        <i class="fa fa-list" aria-hidden="true"></i>
-                    </div>
-                    <div class="info">
-                        <h6 class="number">{{ $publishedPropertiesCount }}</h6>
-                        <p class="type ml-1">Proprietăți Publicate</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-xs-12 dar rev mr-3">
-                <div class="item">
-                    <div class="icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <div class="info">
-                        <h6 class="number">{{ $totalViewsCount }}</h6>
-                        <p class="type ml-1">Vizualizări totale</p>
+    <div class="dashborad-box stat bg-white">
+        <h4 class="title">Administrează Tabloul de Bord</h4>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-xs-12 dar pro mr-3">
+                    <div class="item">
+                        <div class="icon">
+                            <i class="fa fa-list" aria-hidden="true"></i>
+                        </div>
+                        <div class="info">
+                            <h6 class="number">{{ $publishedPropertiesCount }}</h6>
+                            <p class="type ml-1">Proprietăți Publicate</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-6 dar com mr-3">
-                <div class="item mb-0">
-                    <div class="icon">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <div class="info">
-                        <h6 class="number">0</h6>
-                        <p class="type ml-1">Mesaje</p>
+                <div class="col-lg-3 col-md-6 col-xs-12 dar rev mr-3">
+                    <div class="item">
+                        <div class="icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="info">
+                            <h6 class="number">{{ $totalViewsCount }}</h6>
+                            <p class="type ml-1">Vizualizări totale</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-6 dar booked">
-                <div class="item mb-0">
-                    <div class="icon">
-                        <i class="fas fa-heart"></i>
+                <div class="col-lg-3 col-md-6 dar com mr-3">
+                    <div class="item mb-0">
+                        <div class="icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="info">
+                            <h6 class="number">0</h6>
+                            <p class="type ml-1">Mesaje</p>
+                        </div>
                     </div>
-                    <div class="info">
-                        <h6 class="number">0</h6>
-                        <p class="type ml-1">Număr de ori adăugat la Favorite</p>
+                </div>
+                <div class="col-lg-3 col-md-6 dar booked">
+                    <div class="item mb-0">
+                        <div class="icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="info">
+                            <h6 class="number">{{ $favoriteCount }}</h6>
+                            <p class="type ml-1">Număr de ori adăugat la Favorite</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="dashborad-box">
-    <h4 class="title">Listări</h4>
-    <div class="section-body listing-table">
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Numele Listării</th>
-                        <th>Data</th>
-                        <th>Rating</th>
-                        <th>Status</th>
-                        <th>Editare</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Restaurant de Lux</td>
-                        <td>23 Ian 2020</td>
-                        <td class="rating"><span>5.0</span></td>
-                        <td class="status"><span class="active">Activ</span></td>
-                        <td class="edit"><a href="#"><i class="fa fa-pencil"></i></a></td>
-                    </tr>
-                    <tr>
-                        <td>Sala de Gimnastică din Oraș</td>
-                        <td>11 Feb 2020</td>
-                        <td class="rating"><span>4.5</span></td>
-                        <td class="status"><span class="active">Activ</span></td>
-                        <td class="edit"><a href="#"><i class="fa fa-pencil"></i></a></td>
-                    </tr>
-                    <tr>
-                        <td>Cafenea în Boston</td>
-                        <td>09 Ian 2020</td>
-                        <td class="rating"><span>5.0</span></td>
-                        <td class="status"><span class="non-active">Inactiv</span></td>
-                        <td class="edit"><a href="#"><i class="fa fa-pencil"></i></a></td>
-                    </tr>
-                    <tr>
-                        <td class="pb-0">Dealer Auto în New York</td>
-                        <td class="pb-0">24 Feb 2018</td>
-                        <td class="rating pb-0"><span>4.5</span></td>
-                        <td class="status pb-0"><span class="active">Activ</span></td>
-                        <td class="edit pb-0"><a href="#"><i class="fa fa-pencil"></i></a></td>
-                    </tr>
-                </tbody>
-            </table>
+    <div class="dashborad-box">
+        <h4 class="title">Listări</h4>
+        <div class="section-body listing-table">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Numele Listării</th>
+                            <th>Data</th>
+                            <th>Preț</th>
+                            <th>Status</th>
+                            <th>Editare</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($properties as $property)
+                            <tr>
+                                <td>{{ $property->title }}</td> <!-- Assuming 'title' is the property name -->
+                                <td>{{ $property->created_at->format('d M Y') }}</td> <!-- Display formatted date -->
+                                <td>{{ $property->price }} €</td> <!-- Assuming 'price' is the price field -->
+                                <td>{{ $property->status }}</td>
+                                <td class="edit"><a href="{{ route('property.edit', $property->id) }}"><i
+                                            class="fa fa-pencil"></i></a></td> <!-- Edit link -->
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+            </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('includes-js')

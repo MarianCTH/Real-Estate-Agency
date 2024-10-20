@@ -96,11 +96,14 @@ class ProfileController extends Controller
     {
         $title = "Panoul de utilizator";
         $user = auth()->user();
+        $properties = $user->properties;
         $userDetails = UserDetail::where('user_id', $user->id)->first();
-        $publishedPropertiesCount = Property::where('status', 'published')->count();
+        $publishedPropertiesCount = $user->properties()->count();
         $totalViewsCount = Property::sum('views'); // Assuming you have a 'views' column in the properties table
+        $user = Auth::user();
+        $favoriteCount = $user->favoriteCount()->get()->sum('favorited_by_count');
 
-        return view('profile.dash', compact('title','userDetails', 'publishedPropertiesCount','totalViewsCount'));
+        return view('profile.dash', compact('title','userDetails', 'publishedPropertiesCount','totalViewsCount', 'favoriteCount', 'properties'));
     }
 
     public function updatePassword(Request $request)

@@ -58,5 +58,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Property::class, 'favorites')->withTimestamps();
     }
-
+    public function favoriteCount()
+    {
+        return $this->hasMany(Property::class, 'user_id')->withCount('favoritedBy');
+    }
 }
