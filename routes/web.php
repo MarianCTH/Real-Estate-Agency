@@ -20,6 +20,7 @@ use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\CookiePolicyController;
 use App\Http\Controllers\ConfidentialityPolicyController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\CompanyController;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
@@ -107,7 +108,8 @@ Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subsc
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 Route::get('/cookie-policy', [CookiePolicyController::class, 'show'])->name('cookie.policy');
-Route::get('/confidentiality-policy', [ConfidentialityPolicyController::class, 'show'])->name('confidentiality.policy');
+Route::get('/confidentiality-policy', action: [ConfidentialityPolicyController::class, 'show'])->name('confidentiality.policy');
+Route::get('/assigned-company', action: [CompanyController::class, 'index'])->name('assigned.company.index');
 
 // Include authentication routes
 require __DIR__ . '/auth.php';

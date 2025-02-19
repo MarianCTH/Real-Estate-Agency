@@ -19,8 +19,13 @@
     </a>
 </li>
 <li>
+    <a @if($title == 'Societate imobiliară') class="active" @endif href="{{ route('assigned.company.index') }}">
+        <i class="fa fa-users" aria-hidden="true"></i>Societate imobiliară
+    </a>
+</li>
+<li>
     <a @if($title == 'Adaugă anunț') class="active" @endif href="{{ route('properties.create') }}">
-        <i class="fa fa-list" aria-hidden="true"></i>Adaugă anunț
+        <i class="fa fa-plus" aria-hidden="true"></i>Adaugă anunț
     </a>
 </li>
 

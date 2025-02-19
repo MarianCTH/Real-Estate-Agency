@@ -62,4 +62,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Property::class, 'user_id')->withCount('favoritedBy');
     }
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 }

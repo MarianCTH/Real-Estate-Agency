@@ -18620,7 +18620,7 @@ a.button {
 
 .dashboard-bd .sidebar-header {
   background-color: #24324a;
-  padding: 28px 0 28px 0;
+  padding: 15px 90px 15px 90px;
 }
 
 .dashboard-bd .left-side {
@@ -18697,8 +18697,7 @@ body.dashboard-bd {
 }
 
 .dashboard-bd .sidebar-header img {
-  width: 340px;
-  height: 47px;
+  width: 120px;
 }
 
 @media only screen and (max-width: 1024px) {

@@ -13,7 +13,7 @@
             <i class="fa fa-list" aria-hidden="true"></i>
             <div class="count-me">
                 <p class="counter text-left">{{ $dailyListingsCount }}</p>
-                <h3>Listări zilnice</h3>
+                <h3>Societăți imobiliare</h3>
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
             <i class="fa fa-users" aria-hidden="true"></i>
             <div class="count-me">
                 <p class="counter text-left">{{ $agentsCount }}</p>
-                <h3>Agenți experți</h3>
+                <h3>Agenți imobiliari</h3>
             </div>
         </div>
     </div>

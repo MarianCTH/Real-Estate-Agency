@@ -1,5 +1,5 @@
 <li><a href="{{ route('welcome') }}">Acasă</a></li>
-<li><a href="#">Proprietăți</a>
+<li><a href="#">Imobiliare</a>
     <ul>
         <li><a href="{{ route('properties') }}">Toate proprietățile</a></li>
 
@@ -24,7 +24,13 @@
         </li>
     </ul>
 </li>
-<li><a href="{{ route('agents') }}">Agenți</a></li>
+<li><a href="#">Rețea imobiliară</a>
+    <ul>
+        <li><a href="{{ route('agents') }}">Agenți imobiliari</a></li>
+
+        <li><a href="#">Societăți imobiliare</a>
+    </ul>
+</li>
 <li><a href="{{ route('contact') }}">Contact</a></li>
 <li class="d-none d-xl-none d-block d-lg-block"><a href="{{ route('login') }}">Intră în cont</a></li>
 <li class="d-none d-xl-none d-block d-lg-block"><a href="{{ route('register') }}">Cont nou</a></li>

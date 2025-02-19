@@ -12,7 +12,7 @@ class WelcomeController extends Controller
     {
         $soldPropertiesCount = Property::where('status', 'sold')->count();
         $dailyListingsCount = Property::whereDate('created_at', today())->count();
-        $agentsCount = User::where('type', 'Persoană juridică')->count();
+        $agentsCount = User::where('type', 'Agent imobiliar')->count();
         $languagesCount = User::where('type', 'Persoană fizică')->count();
 
         $lastProperties = Property::latest()->take(6)->get();

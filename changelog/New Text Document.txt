@@ -1,3 +1,0 @@
-1. Am facut la tabloul de bord statisticile de proprietati publicate, vizualizari etc...
-2. Am adaugat in bara de navigare urmatoarele categorii: de vanzare, de inchiriat
-3. Am modificat partea de servicii de pe pagina principala
