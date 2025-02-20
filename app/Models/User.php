@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'image',
         'type',
+        'company_id',
     ];
 
     /**
@@ -64,6 +65,6 @@ class User extends Authenticatable
     }
     public function company()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Company::class, 'company_id');
     }
 }

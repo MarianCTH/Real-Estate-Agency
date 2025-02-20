@@ -54,25 +54,29 @@
                                 <a href="{{ route('user.properties', $agent->id) }}"><h3>{{ $agent->name }}</h3></a>
                                 <div class="the-agents">
                                     <ul class="the-agents-details">
-                                            <li><a href="#">Office: {{ $agent->office_phone }}</a></li>
-                                            <li><a href="#">Mobile: {{ $agent->mobile_phone }}</a></li>
-                                            <li><a href="#">Fax: {{ $agent->fax }}</a></li>
-                                            <li><a href="#">Email: {{ $agent->email }}</a></li>
+                                        <li><a href="#">Office: {{ $agent->office_phone }}</a></li>
+                                        <li><a href="#">Mobile: {{ $agent->mobile_phone }}</a></li>
+                                        <li><a href="#">Fax: {{ $agent->fax }}</a></li>
+                                        <li><a href="#">Email: {{ $agent->email }}</a></li>
+                                        @if ($agent->company)
+                                            <li><a href="#">Societate: {{ $agent->company->name }}</a></li>
+                                        @endif
                                     </ul>
                                 </div>
                                 <div class="news-item-bottom">
                                     <a href="{{ route('user.properties', $agent->id) }}" class="news-link">Vezi proprietăți</a>
                                     <div class="admin">
-                                        <p>Societate imobiliară:</p>
-                                        <img src="images/partners/2.png" alt="">
+                                        @if ($agent->company)
+                                            <img src="{{ asset($agent->company->image) }}" alt="">
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     @endforeach
                 </div>
+
             </div>
             <aside class="col-lg-4 col-md-12 car">
                 <div class="single widget">

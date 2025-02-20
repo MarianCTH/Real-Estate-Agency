@@ -18,11 +18,14 @@
         <i class="fa fa-heart" aria-hidden="true"></i>Proprietăți favorite
     </a>
 </li>
+@if(auth()->user() && auth()->user()->type === 'Agent imobiliar')
+
 <li>
-    <a @if($title == 'Societate imobiliară') class="active" @endif href="{{ route('assigned.company.index') }}">
+    <a @if($title == 'Societate imobiliară') class="active" @endif href="{{ route('companies.index') }}">
         <i class="fa fa-users" aria-hidden="true"></i>Societate imobiliară
     </a>
 </li>
+@endif
 <li>
     <a @if($title == 'Adaugă anunț') class="active" @endif href="{{ route('properties.create') }}">
         <i class="fa fa-plus" aria-hidden="true"></i>Adaugă anunț
