@@ -36,6 +36,15 @@ class Property extends Model
     {
         return $this->belongsTo(PropertyType::class, 'type_id');
     }
+    public function propertyStatus()
+    {
+        return $this->belongsTo(PropertyStatus::class, 'status_id');
+    }
+    public function status()
+{
+    return $this->belongsTo(PropertyStatus::class, 'status_id');
+}
+
     public function location()
     {
         return $this->belongsTo(Location::class);

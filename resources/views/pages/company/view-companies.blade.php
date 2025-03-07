@@ -9,9 +9,9 @@
                 <div class="detail-wrapper-body">
                     <div class="listing-title-bar">
                         <div class="text-heading text-left">
-                            <p class="pb-2"><a href="index.html">Acasă </a> &nbsp;/&nbsp; <span>Agenți</span></p>
+                            <p class="pb-2"><a href="index.html">Acasă </a> &nbsp;/&nbsp; <span>Societăți imobiliare</span></p>
                         </div>
-                        <h3>Agenți imobiliari</h3>
+                        <h3>Societăți imobiliare</h3>
                     </div>
                 </div>
             </div>
@@ -23,7 +23,7 @@
                         <div class="detail-wrapper-body">
                             <div class="listing-title-bar">
                                 <div class="text-heading text-left">
-                                    <p class="font-weight-bold mb-0 mt-3">{{ $agents->count() }} Agenți afișați în pagina curentă</p>
+                                    <p class="font-weight-bold mb-0 mt-3">{{ $companies->count() }} Societăți imobiliare afișate în pagina curentă</p>
                                 </div>
                             </div>
                         </div>
@@ -33,7 +33,7 @@
                                 <select class="form-control border-0 bg-transparent shadow-none p-0 selectpicker sortby" data-style="bg-transparent border-0 font-weight-600 btn-lg pl-0 pr-3" id="inputGroupSelect01" name="sortby">
                                     <option selected>Alfabet</option>
                                     <option value="1">Agenție</option>
-                                    <option value="1">Numărul de proprietăți</option>
+                                    <option value="2">Numărul de proprietăți</option>
                                 </select>
                             </div>
 
@@ -41,35 +41,27 @@
                     </div>
                 </section>
                 <div class="row">
-                    @foreach ($agents as $agent)
+                    @foreach ($companies as $company)
                     <div class="col-md-12 col-xs-12 {{ !$loop->first ? 'space' : '' }}">
                         <div class="news-item news-item-sm">
-                            <a href="{{ route('user.properties', $agent->id) }}" class="news-img-link">
+                            <a href="" class="news-img-link">
                                 <div class="news-item-img homes">
-                                    <div class="homes-tag button alt featured">{{ $agent->properties_count }} Listări</div>
-                                    <img class="resp-img" src="{{ asset('img/users/' . $agent->image) }}" alt="blog image">
+                                    <div class="homes-tag button alt featured">{{ $company->members->sum(fn($member) => $member->properties->count()) }} Listări</div>
+                                    <img class="resp-img" src="{{ asset($company->image) }}" alt="blog image">
                                 </div>
                             </a>
                             <div class="news-item-text">
-                                <a href="{{ route('user.properties', $agent->id) }}"><h3>{{ $agent->name }}</h3></a>
+                                <a href=""><h3>{{ $company->name }}</h3></a>
                                 <div class="the-agents">
                                     <ul class="the-agents-details">
-                                        <li><a href="#">Office: {{ $agent->office_phone }}</a></li>
-                                        <li><a href="#">Mobile: {{ $agent->mobile_phone }}</a></li>
-                                        <li><a href="#">Fax: {{ $agent->fax }}</a></li>
-                                        <li><a href="#">Email: {{ $agent->email }}</a></li>
-                                        @if ($agent->company)
-                                            <li><a href="#">Societate: {{ $agent->company->name }}</a></li>
-                                        @endif
+                                        <li><a href="#">Locație: {{$company->address}}</a></li>
+                                        <li><a href="#">Telefon: {{$company->mobile_phone}}</a></li>
+                                        <li><a href="#">CUI: {{$company->cui}}</a></li>
+                                        <li><a href="#">Email: {{$company->email}}</a></li>
                                     </ul>
                                 </div>
                                 <div class="news-item-bottom">
-                                    <a href="{{ route('user.properties', $agent->id) }}" class="news-link">Vezi proprietăți</a>
-                                    <div class="admin">
-                                        @if ($agent->company)
-                                            <img src="{{ asset($agent->company->image) }}" alt="">
-                                        @endif
-                                    </div>
+                                    <a href="{{ route('agency.properties', $company->id) }}" class="news-link">Vezi proprietăți</a>
                                 </div>
                             </div>
                         </div>
@@ -147,7 +139,7 @@
 
         </div>
         <nav aria-label="..." class="pt-0">
-            {{ $agents->links() }}
+            {{ $companies->links() }}
         </nav>
     </div>
 </section>

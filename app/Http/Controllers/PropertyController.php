@@ -11,6 +11,7 @@ use App\Models\PropertyOption;
 use App\Models\UserDetail;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Models\PropertyStatus;
 
 class PropertyController extends Controller
 {
@@ -19,6 +20,7 @@ class PropertyController extends Controller
         $locations = Location::all();
         $propertyTypes = PropertyType::all();
         $propertyOptions = PropertyOption::all();
+        $propertyStatuses = PropertyStatus::all(); // Fetch statuses from the database
 
         // Start building the query
         $query = Property::query();
@@ -33,11 +35,10 @@ class PropertyController extends Controller
         }
 
         if ($request->filled('property_type')) {
-            $query->where('property_type_id', $request->input('property_type'));
+            $query->where('type_id', $request->input('property_type'));
         }
-
         if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
+            $query->where('status_id', $request->input('status')); // Adjust for the new structure
         }
 
         if ($request->filled('bedrooms')) {
@@ -47,12 +48,13 @@ class PropertyController extends Controller
         if ($request->filled('bathrooms')) {
             $query->where('bathrooms', $request->input('bathrooms'));
         }
-        if ($request->has('area_min') && $request->has('area_max')) {
+        if ($request->filled('area_min') && $request->filled('area_max')) {
             $query->whereBetween('size', [$request->input('area_min'), $request->input('area_max')]);
         }
-        if ($request->has('price_min') && $request->has('price_max')) {
+        if ($request->filled('price_min') && $request->filled('price_max')) {
             $query->whereBetween('price', [$request->input('price_min'), $request->input('price_max')]);
         }
+
         if ($request->has('sortby')) {
             switch ($request->input('sortby')) {
                 case '1':
@@ -71,10 +73,10 @@ class PropertyController extends Controller
         // Use pagination instead of getting all records
         $properties = $query->paginate(10); // Change 10 to the number of items per page you want
         if ($request->ajax()) {
-            return view('pages.properties.index', compact('properties', 'locations', 'propertyTypes', 'propertyOptions'))->render();
+            return view('pages.properties.index', compact('properties', 'locations', 'propertyTypes', 'propertyOptions', 'propertyStatuses'))->render();
         }
 
-        return view('pages.properties.index', compact('properties', 'locations', 'propertyTypes', 'propertyOptions'));
+        return view('pages.properties.index', compact('properties', 'locations', 'propertyTypes', 'propertyOptions', 'propertyStatuses'));
     }
 
     public function show($id)
@@ -153,31 +155,12 @@ class PropertyController extends Controller
 
     public function get_properties(Request $request)
     {
-        $query = Property::with('user.userDetail', 'type');
-        /*
-                if ($request->has('property-status') && $request->input('property-status') !== '') {
-                    $query->where('status', $request->input('property-status'));
-                }
+        $query = Property::with('user.userDetail', 'type', 'status');
 
-                if ($request->has('property-type') && $request->input('property-type') !== '') {
-                    $query->where('type_id', $request->input('property-type'));
-                }
-
-                if ($request->has('location') && $request->input('location') !== '') {
-                    $query->where('location', $request->input('location'));
-                }
-
-                if ($request->has('beds') && $request->input('beds') !== '') {
-                    $query->where('bedrooms', $request->input('beds'));
-                }
-
-                if ($request->has('baths') && $request->input('baths') !== '') {
-                    $query->where('bathrooms', $request->input('baths'));
-                }
-        */
         $properties = $query->get();
         return response()->json($properties);
     }
+
 
     public function store(Request $request)
     {

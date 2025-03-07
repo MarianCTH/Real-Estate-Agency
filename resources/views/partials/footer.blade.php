@@ -40,13 +40,11 @@
                                 <li><a href="{{ url('/') }}">Acasă</a></li>
                                 <li><a href="{{ url('/properties') }}">Proprietăți</a></li>
                                 <li><a href="{{ url('/agents') }}">Agenți</a></li>
-                                <li><a href="{{ url('/about-us') }}">Despre Noi</a></li>
                                 <li class="no-mgb"><a href="{{ url('/contact') }}">Contact</a></li>
                             </ul>
                             <ul class="nav-right">
-                                <li><a href="{{ route('confidentiality.policy') }}">Politică de confidențialitate</a></li>
+                                <li><a href="{{ route('confidentiality.policy') }}">Confidențialitate</a></li>
                                 <li><a href="{{ route('cookie.policy') }}">Politica de cookie-uri</a></li>
-                                <li><a href="{{ url('/blog') }}">Blog</a></li>
                                 <li><a href="{{ url('/auth') }}">Autentificare</a></li>
                                 <li class="no-mgb"><a href="{{ url('/register') }}">Înregistrare</a></li>
                             </ul>

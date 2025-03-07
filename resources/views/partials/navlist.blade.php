@@ -3,32 +3,30 @@
     <ul>
         <li><a href="{{ route('properties') }}">Toate proprietățile</a></li>
 
-        <li><a href="#">De vânzare</a>
-            <ul>
-                <li><a href="#">Apartamente</a></li>
-                <li><a href="#">Garsoniere</a></li>
-                <li><a href="#">Case și vile</a></li>
-                <li><a href="#">Terenuri</a></li>
-                <li><a href="#">Spații comerciale</a></li>
-            </ul>
-        </li>
-        <li><a href="#">De închiriat</a>
-            <ul>
-                <li><a href="#">Apartamente</a></li>
-                <li><a href="#">Garsoniere</a></li>
-                <li><a href="#">Case și vile</a></li>
-                <li><a href="#">Terenuri</a></li>
-                <li><a href="#">Spații comerciale</a></li>
-                <li><a href="#">Birouri</a></li>
-            </ul>
-        </li>
+        @php
+            // Retrieve all the statuses from the PropertyStatus model
+            $statuses = \App\Models\PropertyStatus::all();
+        @endphp
+
+        @foreach ($statuses as $status)
+            <li><a href="{{ route('properties', ['status' => $status->id]) }}">{{ $status->name }}</a>
+                <ul>
+                    @foreach (\App\Models\PropertyType::all() as $type)
+                        <li><a href="{{ route('properties', ['status' => $status->id, 'property_type' => $type->id]) }}">{{ $type->name }}</a></li>
+                    @endforeach
+                </ul>
+            </li>
+        @endforeach
     </ul>
 </li>
+
+
+
 <li><a href="#">Rețea imobiliară</a>
     <ul>
         <li><a href="{{ route('agents') }}">Agenți imobiliari</a></li>
 
-        <li><a href="#">Societăți imobiliare</a>
+        <li><a href="{{ route('agencies') }}">Societăți imobiliare</a>
     </ul>
 </li>
 <li><a href="{{ route('contact') }}">Contact</a></li>

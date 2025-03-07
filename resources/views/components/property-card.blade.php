@@ -7,7 +7,7 @@
                     @if($property->featured)
                         <div class="homes-tag button alt featured">Promovat</div>
                     @endif
-                    <div class="homes-tag button alt sale">{{ $property->status }}</div>
+                    <div class="homes-tag button alt sale">{{ $property->status->name }}</div>
                     <div class="homes-price">{{ number_format($property->price, 3) }} €</div>
                     <img src="{{ asset('img/properties/' . $property->image) }}" alt="{{ $property->title }}" class="img-responsive">
                 </a>

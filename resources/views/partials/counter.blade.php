@@ -3,8 +3,8 @@
         <div class="countr">
             <i class="fa fa-home" aria-hidden="true"></i>
             <div class="count-me">
-                <p class="counter text-left">{{ $soldPropertiesCount }}</p>
-                <h3>Proprietăți vândute</h3>
+                <p class="counter text-left">{{ $totalPropertiesCount }}</p>
+                <h3>Proprietăți postate</h3>
             </div>
         </div>
     </div>
@@ -12,7 +12,7 @@
         <div class="countr">
             <i class="fa fa-list" aria-hidden="true"></i>
             <div class="count-me">
-                <p class="counter text-left">{{ $dailyListingsCount }}</p>
+                <p class="counter text-left">{{ $companies }}</p>
                 <h3>Societăți imobiliare</h3>
             </div>
         </div>

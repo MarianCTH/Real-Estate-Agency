@@ -74,7 +74,7 @@
                                 <td>{{ $property->title }}</td> <!-- Assuming 'title' is the property name -->
                                 <td>{{ $property->created_at->format('d M Y') }}</td> <!-- Display formatted date -->
                                 <td>{{ $property->price }} €</td> <!-- Assuming 'price' is the price field -->
-                                <td>{{ $property->status }}</td>
+                                <td>{{ $property->status->name }}</td>
                                 <td class="edit"><a href="{{ route('property.edit', $property->id) }}"><i
                                             class="fa fa-pencil"></i></a></td> <!-- Edit link -->
                             </tr>

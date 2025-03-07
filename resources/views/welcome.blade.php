@@ -140,7 +140,7 @@
                                                 @if ($property->featured == 1)
                                                     <div class="homes-tag button alt featured">Promovat</div>
                                                 @endif
-                                                <div class="homes-tag button alt sale">{{ $property->status }}</div>
+                                                <div class="homes-tag button alt sale">{{ $property->status->name }}</div>
                                                 <img src="img/properties/{{ $property->id }}/{{ $property->image }}"
                                                     alt="home-1" class="img-responsive">
                                             </a>
@@ -329,7 +329,7 @@
                                 <div class="homes">
                                     <!-- homes img -->
                                     <a href="{{ route('property.show', ['id' => $property->id]) }}" class="homes-img">
-                                        <div class="homes-tag button alt sale">{{ $property->status }}</div>
+                                        <div class="homes-tag button alt sale">{{ $property->status->name }}</div>
                                         <img src="img/properties/{{ $property->id }}/{{ $property->image }}"
                                             alt="home-1" class="img-responsive">
                                     </a>
@@ -498,8 +498,8 @@
     <section class="counterup">
         <div class="container" data-aos="fade-up">
             @include('partials.counter', [
-                'soldPropertiesCount' => $soldPropertiesCount,
-                'dailyListingsCount' => $dailyListingsCount,
+                'totalPropertiesCount' => $totalPropertiesCount,
+                'companies' => $companies,
                 'agentsCount' => $agentsCount,
                 'languagesCount' => $languagesCount,
             ])
@@ -646,7 +646,7 @@
                                                     </div>
                                                     <div class="homes">
                                                         <a href="/properties/${property.id}" class="homes-img">
-                                                            <div class="homes-tag button alt featured">${property.status}</div>
+                                                            <div class="homes-tag button alt featured">${property.status.name}</div>
                                                             <img src="/img/properties/${property.id}/${property.image}" alt="home-1" class="img-responsive">
                                                         </a>
                                                     </div>

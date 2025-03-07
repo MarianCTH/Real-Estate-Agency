@@ -22,7 +22,7 @@
                                     <div class="detail-wrapper-body">
                                         <div class="listing-title-bar">
                                             <h3>{{ $property->title }}<span
-                                                    class="mrg-l-5 category-tag">{{ $property->status }}</span></h3>
+                                                    class="mrg-l-5 category-tag">{{ $property->status->name }}</span></h3>
                                             <div class="mt-0">
                                                 <a href="#listing-location" class="listing-address">
                                                     <i
@@ -97,7 +97,7 @@
                             </li>
                             <li>
                                 <span class="font-weight-bold mr-1">Status:</span>
-                                <span class="det">{{ $property->status }}</span>
+                                <span class="det">{{ $property->status->name }}</span>
                             </li>
                             <li>
                                 <span class="font-weight-bold mr-1">Preț:</span>
@@ -220,7 +220,7 @@
                                                                 <div class="listing-badges">
                                                                     <span
                                                                         class="featured">{{ $otherProperty->price }} €</span>
-                                                                    <span>{{ $otherProperty->status }}</span>
+                                                                    <span>{{ $property->status->name }}</span>
                                                                 </div>
                                                                 <div class="listing-img-content">
                                                                     <span

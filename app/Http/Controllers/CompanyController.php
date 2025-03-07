@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use App\Models\JoinRequest;
-
+use App\Models\Property;
 class CompanyController extends Controller
 {
     public function index()
@@ -18,6 +18,33 @@ class CompanyController extends Controller
         $company = $user->company;
 
         return view('pages.company.assigned-company', compact('title', 'company'));
+    }
+
+    public function agencies_view()
+    {
+        $title = 'Societați imobiliare';
+
+        $companies = Company::with(['members.properties'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $recentProperties = Property::latest()->take(3)->get();
+        $featuredProperties = Property::where('featured', true)->take(3)->get();
+
+        return view('pages.company.view-companies', compact('title', 'companies', 'recentProperties', 'featuredProperties'));
+    }
+
+    public function agencyProperties($companyId)
+    {
+        $company = Company::with('members.properties')->findOrFail($companyId);
+
+        $title = 'Proprietăți publicate de ' . $company->name;
+
+        $properties = Property::whereIn('user_id', $company->members->pluck('id'))
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('pages.company.company-properties', compact('title', 'company', 'properties'));
     }
 
     public function assign()

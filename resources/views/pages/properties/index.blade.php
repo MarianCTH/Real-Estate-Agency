@@ -67,8 +67,9 @@
                                                 @if ($property->featured == 1)
                                                     <div class="homes-tag button alt featured">Promovat</div>
                                                 @endif
-                                                <div class="homes-tag button alt sale">Vânzare</div>
-                                                <img src="{{ asset('img/properties/' . $property->id . '/' . $property->image) }}"
+                                                <div class="homes-tag button alt sale">
+                                                    {{ $property->status->name ?? 'N/A' }}  <!-- Display status dynamically -->
+                                                </div>                                                <img src="{{ asset('img/properties/' . $property->id . '/' . $property->image) }}"
                                                     alt="{{ $property->title }}" class="img-responsive">
                                             </a>
                                         </div>
@@ -190,10 +191,13 @@
                                     <div class="form-group categories">
                                         <select name="status" class="form-control wide">
                                             <option value="">Status Proprietate</option>
-                                            <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>De
-                                                vânzare</option>
-                                            <option value="2" {{ request('status') == '2' ? 'selected' : '' }}>De
-                                                închiriat</option>
+                                            @foreach($propertyStatuses as $status)
+                                                <option value="{{ $status->id }}" {{ request('status') == $status->id ? 'selected' : '' }}>
+                                                    {{ $status->name }}
+                                                </option>
+                                            @endforeach
+
+
                                         </select>
                                     </div>
                                     <!-- Bedrooms Filter -->

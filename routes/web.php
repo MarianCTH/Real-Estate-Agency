@@ -108,7 +108,8 @@ Route::middleware(['auth', 'agent'])->group(function () {
 });
 
 Route::get('/agents', [AgentController::class, 'index'])->name('agents');
-
+Route::get('/agencies', [CompanyController::class, 'agencies_view'])->name('agencies');
+Route::get('/agencies/{company}/properties', [CompanyController::class, 'agencyProperties'])->name('agency.properties');
 Route::get('/user/{user}/properties', [PropertyController::class, 'userProperties'])->name('user.properties');
 
 Route::get('/properties', [PropertyController::class, 'index'])->name('properties');
