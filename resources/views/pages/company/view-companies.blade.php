@@ -61,7 +61,7 @@
                                     </ul>
                                 </div>
                                 <div class="news-item-bottom">
-                                    <a href="{{ route('agency.properties', $company->id) }}" class="news-link">Vezi proprietăți</a>
+                                    <a href="{{ route('agency.properties', $company->id) }}" class="news-link">Vezi toate listările</a>
                                 </div>
                             </div>
                         </div>
@@ -77,7 +77,7 @@
                         <!-- Recent Properties -->
                         <div class="widget-boxed mt-5">
                             <div class="widget-boxed-header">
-                                <h4>Recent Properties</h4>
+                                <h4>Postări Recente</h4>
                             </div>
                             <div class="widget-boxed-body">
                                 <div class="recent-post">
@@ -102,7 +102,7 @@
                         @if ($featuredProperties->isNotEmpty())
                             <div class="widget-boxed mt-5">
                                 <div class="widget-boxed-header mb-5">
-                                    <h4>Feature Properties</h4>
+                                    <h4>Recomandări</h4>
                                 </div>
                                 <div class="widget-boxed-body">
                                     <div class="slick-lancers">

@@ -120,10 +120,13 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-12 dropdown faq-drop">
                         <div class="form-group categories">
-                            <label for="status">Status</label>
-                            <select name="status" class="form-control wide">
-                                <option value="vanzare">De vânzare</option>
-                                <option value="inchiriat">De închiriat</option>
+                            <label for="status_id">Status</label>
+                            <select name="status_id" class="form-control wide">
+                                @foreach ($propertyStatuses as $propertyStatus)
+                                    @if ($propertyStatus->name != 'Vândut')
+                                        <option value="{{ $propertyStatus->id }}">{{ $propertyStatus->name }}</option>
+                                    @endif
+                                @endforeach
                             </select>
                         </div>
                         <div class="alert alert-danger" id="status-error" style="display:none;"></div>
@@ -144,7 +147,7 @@
 
                     <div class="col-lg-4 col-md-12 dropdown faq-drop">
                         <div class="form-group categories">
-                            <label for="status">Camere</label>
+                            <label for="bedrooms">Camere</label>
                             <select name="bedrooms" class="form-control wide">
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -584,7 +587,7 @@
 
                         let successMessage = document.createElement('div');
                         successMessage.className = 'alert alert-success';
-                        successMessage.textContent = 'Property added successfully!';
+                        successMessage.textContent = 'Anunțul a fost postat cu success!';
                         document.querySelector('.add-property-button').prepend(successMessage);
 
                         setTimeout(function() {

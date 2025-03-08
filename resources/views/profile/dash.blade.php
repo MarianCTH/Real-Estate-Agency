@@ -55,14 +55,16 @@
     </div>
 
     <div class="dashborad-box">
-        <h4 class="title">Listări</h4>
+        <h4 class="title">Anunțurile mele</h4>
+        @if($properties->count() > 0)
+
         <div class="section-body listing-table">
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Numele Listării</th>
-                            <th>Data</th>
+                            <th>Proprietate</th>
+                            <th>Data Postării</th>
                             <th>Preț</th>
                             <th>Status</th>
                             <th>Editare</th>
@@ -81,9 +83,11 @@
                         @endforeach
                     </tbody>
                 </table>
-
             </div>
         </div>
+        @else
+            <p>Nu ai publicat nici un anunț.</p>
+        @endif
     </div>
 @endsection
 

@@ -9,7 +9,7 @@
                     @endif
                     <div class="homes-tag button alt sale">{{ $property->status->name }}</div>
                     <div class="homes-price">{{ number_format($property->price, 3) }} €</div>
-                    <img src="{{ asset('img/properties/' . $property->image) }}" alt="{{ $property->title }}" class="img-responsive">
+                    <img src="{{ asset('img/properties/'  . $property->id . '/'. $property->image) }}" alt="{{ $property->title }}" class="img-responsive">
                 </a>
             </div>
             <div class="button-effect">
@@ -48,7 +48,7 @@
                 </li>
             </ul>
             <div class="footer">
-                <a href="{{ route('pages.agents.show', $property->user->id) }}">
+                <a href="{{ route('user.properties', $property->user->id) }}">
                     <img src="{{ asset('img/users/' . $property->user->image) }}" alt="" class="mr-2"> {{ $property->user->name }}
                 </a>
                 <span>{{ $property->created_at->diffForHumans() }}</span>

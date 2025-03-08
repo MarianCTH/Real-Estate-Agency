@@ -37,8 +37,7 @@
             <form method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="access_social">
-                    <a href="#0" class="social_bt facebook">Autentificare cu Facebook</a>
-                    <a href="#0" class="social_bt google">Autentificare cu Google</a>
+                    <a href="{{ route('google.login') }}" class="social_bt google">Autentificare cu Google</a>
                 </div>
                 <div class="divider"><span>Sau</span></div>
                 <div class="form-group">

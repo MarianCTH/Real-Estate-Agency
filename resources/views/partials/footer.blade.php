@@ -44,7 +44,7 @@
                             </ul>
                             <ul class="nav-right">
                                 <li><a href="{{ route('confidentiality.policy') }}">Confidențialitate</a></li>
-                                <li><a href="{{ route('cookie.policy') }}">Politica de cookie-uri</a></li>
+                                <li><a href="{{ route('cookie.policy') }}">Cookie-uri</a></li>
                                 <li><a href="{{ url('/auth') }}">Autentificare</a></li>
                                 <li class="no-mgb"><a href="{{ url('/register') }}">Înregistrare</a></li>
                             </ul>

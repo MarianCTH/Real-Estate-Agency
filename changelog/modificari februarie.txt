@@ -6,3 +6,13 @@
 5. Am rezolvat sectiunea de agenti imobiliari sa arate mai bine
 6. Am facut sectiunea de vizualizare societati imobiliare
 7. Am adaugat societatile imobiliare (editare/stergere/creare/vizualizare membri/acceptare membri)
+8. Am rezolvat problema cu imaginile de la proprietati sa fie toate de aceeasi dimensiune
+- pe pagina principala
+- la proprietati recomandate
+- la vizualizare proprietate
+9. Am rezolvat counter-ul de pe pagina principala
+10. Am rezolvat la sectiunea de imobiliare din navigare sa mearga filtering-ul
+11. Am facut sa nu arate cate bai, garaje are proprietate daca sunt 0
+12. Am facut sa mearga conectarea cu google
+13. Am rezolvat o problema cu vizualizare in cont
+14. Daca nu ai anunturi publicate o sa arate altcumva in panoul de utilizator, anunturile mele, anunturi favorite

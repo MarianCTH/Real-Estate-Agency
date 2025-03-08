@@ -21,6 +21,9 @@ use App\Http\Controllers\CookiePolicyController;
 use App\Http\Controllers\ConfidentialityPolicyController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\CompanyController;
+use Laravel\Socialite\Facades\Socialite;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
@@ -128,6 +131,29 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 
 Route::get('/cookie-policy', [CookiePolicyController::class, 'show'])->name('cookie.policy');
 Route::get('/confidentiality-policy', action: [ConfidentialityPolicyController::class, 'show'])->name('confidentiality.policy');
+
+Route::get('/auth/google', function () {
+    return Socialite::driver('google')->redirect();
+})->name('google.login');
+
+Route::get('/auth/google/callback', function () {
+    $googleUser = Socialite::driver('google')->stateless()->user();
+
+    $user = User::where('email', $googleUser->email)->first();
+
+    if (!$user) {
+        $user = User::create([
+            'name' => $googleUser->name,
+            'email' => $googleUser->email,
+            'password' => bcrypt(str()->random(16)),
+            'email_verified_at' => now(),
+        ]);
+    }
+
+    Auth::login($user);
+
+    return redirect('/');
+});
 
 // Include authentication routes
 require __DIR__ . '/auth.php';

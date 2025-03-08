@@ -99,7 +99,7 @@ class ProfileController extends Controller
         $properties = $user->properties;
         $userDetails = UserDetail::where('user_id', $user->id)->first();
         $publishedPropertiesCount = $user->properties()->count();
-        $totalViewsCount = Property::sum('views'); // Assuming you have a 'views' column in the properties table
+        $totalViewsCount = auth()->user()->properties()->sum('views');
         $user = Auth::user();
         $favoriteCount = $user->favoriteCount()->get()->sum('favorited_by_count');
 

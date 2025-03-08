@@ -2803,7 +2803,7 @@ section.portfolio {
 
 .portfolio .homes-content {
   background: #fff !important;
-  padding: 20px 20px !important;
+  padding: 0px 20px 20px 20px!important;
 }
 
 .portfolio .homes-content h3.title a {
@@ -16094,7 +16094,7 @@ section.single-proper {
 }
 
 section.headings-2 {
-  padding: 60px 0 55px 0;
+  padding: 60px 0 25px 0;
   background: #f5f7fb;
 }
 
@@ -16293,7 +16293,6 @@ h4.widget_author__name {
 
 .listing-details-sliders .img-fluid {
   max-width: 100%;
-  height: auto;
 }
 
 .single-proper .mb-30,
@@ -16544,7 +16543,6 @@ div.datedropper.my-style.picker-lkd .pick-submit {
 }
 
 .widget-boxed-header {
-  padding-bottom: 1.5rem;
   padding-top: 0px;
   border-bottom: 1px solid #eaeff5;
 }
@@ -20666,6 +20664,33 @@ a.btn_1.full-width {
   text-align: center;
   margin-bottom: 5px;
 }
+
+.homes-img img {
+    width: 100%; /* Ensures all images take full width of their container */
+    height: 250px; /* Adjust this height to fit your design */
+    object-fit: cover; /* Ensures the image fills the container without distortion */
+    border-radius: 5px; /* Optional: Adds rounded corners */
+}
+
+.listing-img-container img {
+    width: 100%; /* Make sure images take full width of their container */
+    height: 200px; /* Adjust as needed for your design */
+    object-fit: cover; /* Crop images to fit within the container */
+}
+
+.carousel-item img {
+    width: 100%; /* Ensures full width */
+    height: 500px; /* Adjust based on your layout */
+    object-fit: cover; /* Prevents stretching, ensures uniform aspect ratio */
+}
+
+.carousel-indicators img {
+    width: 80px; /* Adjust thumbnail size */
+    height: 60px; /* Maintain aspect ratio */
+    object-fit: cover;
+    border-radius: 5px; /* Optional: for a cleaner look */
+}
+
 
 #login .btn_1,
 a.btn_1 {

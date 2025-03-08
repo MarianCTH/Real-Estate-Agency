@@ -34,7 +34,7 @@
                                     </ul>
                                 </div>
                                 <div class="news-item-bottom">
-                                    <a href="" class="news-link">Vezi toate listările</a>
+                                    <a href="{{ route('agency.properties', $company->id) }}" class="news-link">Vezi toate listările</a>
                                     <div class="admin">
                                         <p>{{ $company->leader->name }}</p>
                                         <img src="{{ asset('img/users/' . $company->leader->image) }}" alt="Leader Image">

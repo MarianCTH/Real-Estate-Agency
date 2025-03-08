@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="my-properties">
+    @if($favorites->count() > 0)
     <table class="table-responsive">
         <thead>
             <tr>
@@ -43,8 +44,12 @@
         </tbody>
     </table>
     <div class="pagination-container">
-        {{ $favorites->links() }} <!-- For pagination -->
+        {{ $favorites->links() }}
     </div>
+    @else
+        <h3>Anunțuri favorite</h3>
+        <p>Nu ai nici un anunț adăugat la favorite.</p>
+    @endif
 </div>
 
 

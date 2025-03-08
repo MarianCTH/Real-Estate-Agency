@@ -48,7 +48,6 @@
                             </section>
                             <!-- main slider carousel items -->
                             <div id="listingDetailsSlider" class="carousel listing-details-sliders slide mb-30">
-                                <h5 class="mb-4">Galerie</h5>
                                 <div class="carousel-inner">
                                     @foreach ($images as $index => $image)
                                         <div class="{{ $index === 0 ? 'active' : '' }} item carousel-item"
@@ -107,18 +106,24 @@
                                 <span class="font-weight-bold mr-1">Dormitoare:</span>
                                 <span class="det">{{ $property->bedrooms }}</span>
                             </li>
+                            @if ($property->bathrooms > 0)
                             <li>
                                 <span class="font-weight-bold mr-1">Băi:</span>
                                 <span class="det">{{ $property->bathrooms }}</span>
                             </li>
+                            @endif
+                            @if ($property->garages > 0)
                             <li>
                                 <span class="font-weight-bold mr-1">Garaje:</span>
                                 <span class="det">{{ $property->garages }}</span>
                             </li>
+                            @endif
+                            @if ($property->bathrooms > 0)
                             <li>
                                 <span class="font-weight-bold mr-1">An construcție:</span>
                                 <span class="det">10/6/2020</span>
                             </li>
+                            @endif
                         </ul>
                     </div>
                     <div class="property-location map">
@@ -137,18 +142,6 @@
                             <form name="contact_form" method="post" action="">
 
                                 <div class="widget-boxed-body">
-                                    <div class="row">
-                                        <div class="col-lg-6 col-md-12 book">
-                                            <input type="text" id="reservation-date" data-lang="en"
-                                                data-large-mode="true" data-min-year="2017" data-max-year="2020"
-                                                data-disabled-days="08/17/2017,08/18/2017" data-id="datedropper-0"
-                                                data-theme="my-style" class="form-control" readonly="">
-                                        </div>
-                                        <div class="col-lg-6 col-md-12 book2">
-                                            <input type="text" id="reservation-time" class="form-control"
-                                                readonly="">
-                                        </div>
-                                    </div>
                                     <div class="row mrg-top-15 mb-3">
                                         <div class="agent-contact-form-sidebar">
                                             <input type="text" id="fname" name="full_name"
@@ -223,9 +216,7 @@
                                                                     <span>{{ $property->status->name }}</span>
                                                                 </div>
                                                                 <div class="listing-img-content">
-                                                                    <span
-                                                                        class="listing-compact-title">{{ $otherProperty->title }}
-                                                                        <i></i></span>
+
                                                                     <ul class="listing-hidden-content">
                                                                         <li>Suprafață <span>{{ $otherProperty->size }} m2
                                                                             </span></li>
@@ -260,7 +251,7 @@
 
                 <section class="similar-property featured portfolio p-0 bg-white-inner">
                     <div class="container">
-                        <h5>Proprietăți promovate</h5>
+                        <h5>Recomandări</h5>
                         <div class="row portfolio-items">
                             @foreach ($properties as $property)
                                 @include('components.property-card', ['property' => $property])

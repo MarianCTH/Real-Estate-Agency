@@ -147,9 +147,10 @@ class PropertyController extends Controller
 
         $user = auth()->user();
         $propertyTypes = PropertyType::all();
+        $propertyStatuses = PropertyStatus::all();
         $userDetails = UserDetail::where('user_id', $user->id)->first();
 
-        return view('pages.properties.create', compact('user', 'userDetails', 'propertyTypes', 'title'));
+        return view('pages.properties.create', compact('user', 'userDetails', 'propertyTypes', 'title', 'propertyStatuses'));
     }
 
 
@@ -167,7 +168,7 @@ class PropertyController extends Controller
         $messages = [
             'title.required' => 'Titlul proprietății este obligatoriu.',
             'description.required' => 'Descrierea proprietății este obligatorie.',
-            'status.required' => 'Statusul proprietății este obligatoriu.',
+            'status_id.required' => 'Statusul proprietății este obligatoriu.',
             'type_id.required' => 'Tipul proprietății este obligatoriu.',
             'type_id.exists' => 'Tipul selectat nu este valid.',
             'bedrooms.required' => 'Numărul de camere este obligatoriu.',
@@ -196,7 +197,7 @@ class PropertyController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:100',
             'description' => 'required|string',
-            'status' => 'required|string',
+            'status_id' => 'required|numeric',
             'type_id' => 'required|integer|exists:property_types,id',
             'bedrooms' => 'required|integer',
             'price' => 'required|numeric',

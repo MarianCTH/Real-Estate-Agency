@@ -20,7 +20,7 @@ class Property extends Model
         'size',
         'image',
         'featured',
-        'status',
+        'status_id',
         'user_id',
         'type_id',
         'latitude',
@@ -41,9 +41,9 @@ class Property extends Model
         return $this->belongsTo(PropertyStatus::class, 'status_id');
     }
     public function status()
-{
-    return $this->belongsTo(PropertyStatus::class, 'status_id');
-}
+    {
+        return $this->belongsTo(PropertyStatus::class, 'status_id');
+    }
 
     public function location()
     {

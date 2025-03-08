@@ -1,9 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Acasă')
 
-@section('includes')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
-@endsection
+
 
 @section('content')
     <section class="header-map google-maps pull-top map-leaflet-wrapper">
@@ -380,119 +378,12 @@
                 @endforeach
             </div>
             <div class="bg-all">
-                <a href="{{ route('properties') }}" class="btn btn-outline-light">Vezi toate</a>
+                <a href="{{ route('properties') }}" class="btn btn-outline-light">Toate anunțurile</a>
             </div>
         </div>
     </section>
     <!-- END SECTION FEATURED PROPERTIES -->
     @endif
-
-    <!-- START SECTION BLOG
-                                                                <section class="blog-section bg-white">
-                                                                    <div class="container">
-                                                                        <div class="section-title">
-                                                                            <h3>Ultimele</h3>
-                                                                            <h2>Noutăți</h2>
-                                                                        </div>
-                                                                        <div class="news-wrap">
-                                                                            <div class="row">
-                                                                                <div class="col-xl-6 col-md-12 col-xs-12" data-aos="fade-right">
-                                                                                    <div class="news-item news-item-sm">
-                                                                                        <a href="blog-details.html" class="news-img-link">
-                                                                                            <div class="news-item-img">
-                                                                                                <img class="resp-img" src="images/blog/b-1.jpg" alt="blog image">
-                                                                                            </div>
-                                                                                        </a>
-                                                                                        <div class="news-item-text">
-                                                                                            <a href="blog-details.html"><h3>The Real Estate News</h3></a>
-                                                                                            <span class="date">Jun 23, 2020 &nbsp;/&nbsp; By Admin</span>
-                                                                                            <div class="news-item-descr">
-                                                                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
-                                                                                            </div>
-                                                                                            <div class="news-item-bottom">
-                                                                                                <a href="blog-details.html" class="news-link">Read more...</a>
-                                                                                                <ul class="action-list">
-                                                                                                    <li class="action-item"><i class="fa fa-heart"></i> <span>306</span></li>
-                                                                                                    <li class="action-item"><i class="fa fa-comment"></i> <span>34</span></li>
-                                                                                                    <li class="action-item"><i class="fa fa-share-alt"></i> <span>122</span></li>
-                                                                                                </ul>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="news-item news-item-sm min-last">
-                                                                                        <a href="blog-details.html" class="news-img-link">
-                                                                                            <div class="news-item-img">
-                                                                                                <img class="resp-img" src="images/blog/b-2.jpg" alt="blog image">
-                                                                                            </div>
-                                                                                        </a>
-                                                                                        <div class="news-item-text">
-                                                                                            <a href="blog-details.html"><h3>The Real Estate News</h3></a>
-                                                                                            <span class="date">Jun 23, 2020 &nbsp;/&nbsp; By Admin</span>
-                                                                                            <div class="news-item-descr">
-                                                                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
-                                                                                            </div>
-                                                                                            <div class="news-item-bottom">
-                                                                                                <a href="blog-details.html" class="news-link">Read more...</a>
-                                                                                                <ul class="action-list">
-                                                                                                    <li class="action-item"><i class="fa fa-heart"></i> <span>306</span></li>
-                                                                                                    <li class="action-item"><i class="fa fa-comment"></i> <span>34</span></li>
-                                                                                                    <li class="action-item"><i class="fa fa-share-alt"></i> <span>122</span></li>
-                                                                                                </ul>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-xl-6 col-md-12 col-xs-12" data-aos="fade-left">
-                                                                                    <div class="news-item news-item-sm">
-                                                                                        <a href="blog-details.html" class="news-img-link">
-                                                                                            <div class="news-item-img">
-                                                                                                <img class="resp-img" src="images/blog/b-3.jpg" alt="blog image">
-                                                                                            </div>
-                                                                                        </a>
-                                                                                        <div class="news-item-text">
-                                                                                            <a href="blog-details.html"><h3>The Real Estate News</h3></a>
-                                                                                            <span class="date">Jun 23, 2020 &nbsp;/&nbsp; By Admin</span>
-                                                                                            <div class="news-item-descr">
-                                                                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
-                                                                                            </div>
-                                                                                            <div class="news-item-bottom">
-                                                                                                <a href="blog-details.html" class="news-link">Read more...</a>
-                                                                                                <ul class="action-list">
-                                                                                                    <li class="action-item"><i class="fa fa-heart"></i> <span>306</span></li>
-                                                                                                    <li class="action-item"><i class="fa fa-comment"></i> <span>34</span></li>
-                                                                                                    <li class="action-item"><i class="fa fa-share-alt"></i> <span>122</span></li>
-                                                                                                </ul>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="news-item news-item-sm last">
-                                                                                        <a href="blog-details.html" class="news-img-link">
-                                                                                            <div class="news-item-img">
-                                                                                                <img class="resp-img" src="images/blog/b-4.jpg" alt="blog image">
-                                                                                            </div>
-                                                                                        </a>
-                                                                                        <div class="news-item-text">
-                                                                                            <a href="blog-details.html"><h3>The Real Estate News</h3></a>
-                                                                                            <span class="date">Jun 23, 2020 &nbsp;/&nbsp; By Admin</span>
-                                                                                            <div class="news-item-descr">
-                                                                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
-                                                                                            </div>
-                                                                                            <div class="news-item-bottom">
-                                                                                                <a href="blog-details.html" class="news-link">Read more...</a>
-                                                                                                <ul class="action-list">
-                                                                                                    <li class="action-item"><i class="fa fa-heart"></i> <span>306</span></li>
-                                                                                                    <li class="action-item"><i class="fa fa-comment"></i> <span>34</span></li>
-                                                                                                    <li class="action-item"><i class="fa fa-share-alt"></i> <span>122</span></li>
-                                                                                                </ul>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </section>
-                                                                END SECTION BLOG -->
 
     <!-- START SECTION COUNTER UP -->
     <section class="counterup">
@@ -615,7 +506,6 @@
                         .then(properties => {
                             properties.forEach(property => {
                                 if (property.latitude && property.longitude) {
-                                    // Use the icon attribute from the property type
                                     var icon = L.icon({
                                         iconUrl: property.type.icon ?
                                             `/img/map/${property.type.icon}` :
@@ -652,12 +542,9 @@
                                                     </div>
                                                     <div class="button-effect">
                                                         <a href="/properties/${property.id}" class="btn"><i class="fa fa-link"></i></a>
-                                                        <a href="https://www.youtube.com/watch?v=2xHQqYRcrx4" class="btn popup-video popup-youtube"><i class="fas fa-video"></i></a>
-                                                        <a href="/properties/${property.id}" class="img-poppu btn"><i class="fa fa-photo"></i></a>
                                                     </div>
                                                 </div>
                                                 <div class="homes-content">
-                                                    <h3><a href="/properties/${property.id}">${property.title}</a></h3>
                                                     <div class="price-properties footer pt-3 pb-0">
                                                         <h3 class="title mt-3">
                                                             <a href="/property/${property.id}">€ ${property.price}</a>
@@ -668,6 +555,13 @@
                                                             </a>
                                                             <a href="#" title="Share">
                                                                 <i class="flaticon-share"></i>
+                                                            </a>
+                                                            <a href="javascript:void(0);" title="Favorites" class="favorite-toggle" data-id="{{ $property->id }}">
+                                                                @if (auth()->check() && auth()->user()->favorites->contains($property->id))
+                                                                    <i class="flaticon-heart red-heart"></i>
+                                                                @else
+                                                                    <i class="flaticon-heart"></i>
+                                                                @endif
                                                             </a>
                                                             <a href="#" title="Favorites">
                                                                 <i class="flaticon-heart"></i>
@@ -680,7 +574,7 @@
                                     </div>
                                 `;
 
-                                    marker.bindPopup(popupContent);
+                                marker.bindPopup(popupContent, { closeButton: false });
                                 } else {
                                     console.log('Invalid coordinates for property:', property);
                                 }
@@ -694,8 +588,8 @@
         updateMap();
 
         document.getElementById('filter-form').addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent the form from submitting the traditional way
-            updateMap(); // Update map based on filter
+            e.preventDefault();
+            updateMap();
         });
     </script>
 

@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="my-properties">
+    @if($properties->count() > 0)
     <table class="table-responsive">
         <thead>
             <tr>
@@ -54,6 +55,10 @@
     <div class="pagination-container">
         {{ $properties->links() }}
     </div>
+    @else
+        <h3>Anunțurile mele</h3>
+        <p>Nu ai publicat nici un anunț.</p>
+    @endif
 </div>
 
 @endsection
