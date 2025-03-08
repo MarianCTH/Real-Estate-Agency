@@ -156,9 +156,27 @@ class PropertyController extends Controller
 
     public function get_properties(Request $request)
     {
-        $query = Property::with('user.userDetail', 'type', 'status');
+        $user = auth()->user();
 
-        $properties = $query->get();
+        $properties = Property::with('user.userDetail', 'type', 'status')->get();
+
+        if ($user) {
+            // Get all favorite property IDs of the logged-in user
+            $favoriteIds = $user->favorites->pluck('id')->toArray();
+
+            // Append is_favorited to each property
+            $properties->transform(function ($property) use ($favoriteIds) {
+                $property->is_favorited = in_array($property->id, $favoriteIds);
+                return $property;
+            });
+        } else {
+            // If user is not authenticated, set is_favorited to false for all properties
+            $properties->transform(function ($property) {
+                $property->is_favorited = false;
+                return $property;
+            });
+        }
+
         return response()->json($properties);
     }
 

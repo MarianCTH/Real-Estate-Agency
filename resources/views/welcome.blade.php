@@ -556,15 +556,8 @@
                                                             <a href="#" title="Share">
                                                                 <i class="flaticon-share"></i>
                                                             </a>
-                                                            <a href="javascript:void(0);" title="Favorites" class="favorite-toggle" data-id="{{ $property->id }}">
-                                                                @if (auth()->check() && auth()->user()->favorites->contains($property->id))
-                                                                    <i class="flaticon-heart red-heart"></i>
-                                                                @else
-                                                                    <i class="flaticon-heart"></i>
-                                                                @endif
-                                                            </a>
-                                                            <a href="#" title="Favorites">
-                                                                <i class="flaticon-heart"></i>
+                                                            <a href="javascript:void(0);" title="Favorites" class="favorite-toggle" data-id="${property.id}">
+                                                                ${ property.is_favorited ? '<i class="flaticon-heart red-heart"></i>' : '<i class="flaticon-heart"></i>' }
                                                             </a>
                                                         </div>
                                                     </div>
