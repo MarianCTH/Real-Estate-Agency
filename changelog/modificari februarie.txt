@@ -1,0 +1,8 @@
+1. Am schimbat logo-ul
+2. Am adaugat la inregistrare sa alegi tipul contului (pers fizica/agent imobiliar)
+3. Nu te poti inregistra pana nu esti de acord cu termenii si conditiile
+4. Am adaugat mesaje la inregistrare/autentificare sa arate daca ai gresit ceva 
+(ex. parola trebuie sa fie de x caractere)
+5. Am rezolvat sectiunea de agenti imobiliari sa arate mai bine
+6. Am facut sectiunea de vizualizare societati imobiliare
+7. Am adaugat societatile imobiliare (editare/stergere/creare/vizualizare membri/acceptare membri)

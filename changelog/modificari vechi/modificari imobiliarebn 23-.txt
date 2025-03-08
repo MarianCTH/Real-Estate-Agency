@@ -1,0 +1,10 @@
+1. Am facut la tabloul de bord statisticile de proprietati publicate, vizualizari etc...
+2. Am adaugat in bara de navigare urmatoarele categorii: de vanzare, de inchiriat
+3. Am modificat partea de servicii de pe pagina principala
+4. Am modificat logo ul din paginile de navigare google
+5. Am facut pagina politica de cookie-uri
+6. Am facut pagina politica de confidentialitate
+7. Am adaugat posibilitatea de a adauga proprietati la favorite
+8. Am facut pagina de proprietati favorite in panoul de utilizator
+9. Am adugat la pagina de vizualizare proprietate: alte proprietati de la agent si locatia proprietatii pe harta
+10. Posibilitate intrare pe pagina de alte proprietatile de la agent

@@ -1,0 +1,5 @@
+1. Cont diferit de agenti / agentie / utilizator / admin
+2. De schimbat logo, BN in gri
+3. De rezolvat sectiune agenti
+4. De rezolvat counter pagina principala
+5. Filtrare proprietati privat sau agentie
