@@ -4,6 +4,12 @@
 @section('includes')
     <link rel="stylesheet" href="{{ asset('css/timedropper.css') }}">
     <link rel="stylesheet" href="{{ asset('css/datedropper.css') }}">
+    <style>
+        .slick-prev,
+        .slick-next {
+            display: none !important;
+        }
+    </style>
 @endsection
 
 @section('body-class', 'inner-pages sin-1 homepage-4 hd-white')
@@ -195,7 +201,6 @@
                                 </div>
                             </div>
                             <div class="main-search-field-2">
-                                <div class="widget-boxed">
                                     <div class="widget-boxed">
                                         <div class="widget-boxed-header">
                                             <h4>Alte anunțuri de la {{ $property->user->name }}</h4>
@@ -238,9 +243,6 @@
                                                 @endforeach
                                             </div>
                                         </div>
-                                    </div>
-
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -292,53 +294,6 @@
     <script src="{{ asset('js/inner.js') }}"></script>
 
     <script>
-        $('#reservation-date').dateDropper();
-    </script>
-
-    <script>
-        this.$('#reservation-time').timeDropper({
-            setCurrentTime: false,
-            meridians: true,
-            primaryColor: "#e8212a",
-            borderColor: "#e8212a",
-            minutesInterval: '15'
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            $('.popup-youtube, .popup-vimeo, .popup-gmaps').magnificPopup({
-                disableOn: 700,
-                type: 'iframe',
-                mainClass: 'mfp-fade',
-                removalDelay: 160,
-                preloader: false,
-                fixedContentPos: false
-            });
-        });
-    </script>
-
-    <script>
-        $('.slick-carousel').each(function() {
-            var slider = $(this);
-            $(this).slick({
-                infinite: true,
-                dots: false,
-                arrows: false,
-                centerMode: true,
-                centerPadding: '0'
-            });
-
-            $(this).closest('.slick-slider-area').find('.slick-prev').on("click", function() {
-                slider.slick('slickPrev');
-            });
-            $(this).closest('.slick-slider-area').find('.slick-next').on("click", function() {
-                slider.slick('slickNext');
-            });
-        });
-    </script>
-
-    <script>
         if ($('#map-contact').length) {
             // Get property coordinates from the server-side variables
             var lat = {{ $property->latitude }};
@@ -372,6 +327,16 @@
                 icon: icon
             }).addTo(map);
         }
+
+        $('.slick-lancers').slick({
+            infinite: true,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: false,
+            dots: true,
+            autoplay: true,
+            autoplaySpeed: 2000
+        });
     </script>
 
 @endsection

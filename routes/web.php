@@ -86,10 +86,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/properties/my-listings', [PropertyController::class, 'myProperties'])->name('my-properties');
     Route::post('/properties/store', [PropertyController::class, 'store'])->name('properties.store');
     Route::get('/property/{id}/edit', [PropertyController::class, 'edit'])->name('property.edit');
-    Route::post('/property/{id}/update', [PropertyController::class, 'update'])->name('property.update');
+    Route::put('/property/{id}', [PropertyController::class, 'update'])->name('property.update');
     Route::delete('/property/{id}/delete', [PropertyController::class, 'destroy'])->name('property.destroy');
     Route::post('/favorite/{property}', [FavoriteController::class, 'toggle'])->name('favorite.toggle');
     Route::delete('/favorites/{property}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
+
+    // Property image management routes
+    Route::post('/properties/delete-image', [PropertyController::class, 'deleteImage'])->name('deleteImage');
+    Route::post('/properties/set-main-image', [PropertyController::class, 'setMainImage'])->name('setMainImage');
 });
 
 Route::middleware(['auth', 'agent'])->group(function () {

@@ -13,82 +13,82 @@
                     <h6>ÎNCEPE CĂUTAREA</h6>
                 </div>
                 <form method="get" id="filter-form">
-                    <div class="filter-item">
-                        <label>Statut proprietate</label>
-                        <select name="property-status">
-                            <option value="">Orice statut</option>
-                            <option value="for-sale">De vânzare</option>
-                            <option value="for-rent">De închiriat</option>
-                            <option value="sold">Vândut</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Tip proprietate</label>
-                        <select name="property-type">
-                            <option value="">Orice tip</option>
-                            <option value="family-house">Casă de familie</option>
-                            <option value="apartment">Apartament</option>
-                            <option value="condo">Condo</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Locație</label>
-                        <select name="location">
-                            <option value="">Orice locație</option>
-                            <option value="bistrita">Bistrița</option>
-                            <option value="bargau">Bargau</option>
-                        </select>
-                    </div>
-                    <div class="filter-item mb-3">
-                        <label>Preț</label>
-                        <input type="text" disabled class="slider_amount m-t-lg-30 m-t-xs-0 m-t-sm-10 mb-3">
-                        <div class="slider-range mt-2"></div>
-                    </div>
-                    <div class="filter-item filter-half mt-3">
-                        <label>Dormitoare</label>
-                        <select name="beds" id="property-beds">
-                            <option value="">Oricare</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                        </select>
-                    </div>
-                    <div class="filter-item filter-half filter-half-last mt-3">
-                        <label>Băi</label>
-                        <select name="baths" id="property-baths">
-                            <option value="">Oricare</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                        </select>
-                    </div>
-                    <div class="clear"></div>
-                    <div class="filter-item">
-                        <label>Suprafață</label>
-                        <input type="number" name="areaMin" class="area-filter filter-1 mb-0" placeholder="Min" />
-                        <input type="number" name="areaMax" class="area-filter mb-0" placeholder="Max" />
-                        <div class="clear"></div>
-                    </div>
-                    <div class="filter-item">
-                        <label class="label-submit p-0 m-0">Trimite</label>
-                        <br />
-                        <input type="submit" class="button alt mb-0" value="CAUTĂ PROPRIETATE" />
-                    </div>
-                </form>
+    <div class="filter-item">
+        <label>Statut proprietate</label>
+        <select name="property-status">
+            <option value="">Orice statut</option>
+            @foreach ($statuses as $status)
+                <option value="{{ $status->name }}">{{ $status->name }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <label>Tip proprietate</label>
+        <select name="property-type">
+            <option value="">Orice tip</option>
+            @foreach ($types as $type)
+                <option value="{{ $type->name }}">{{ $type->name }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <label>Locație</label>
+        <select name="location">
+            <option value="">Orice locație</option>
+            @foreach ($locations as $location)
+                <option value="{{ $location->name }}">{{ $location->name }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="filter-item mb-3">
+    <label>Preț</label>
+    <input type="text" disabled class="slider_amount m-t-lg-30 m-t-xs-0 m-t-sm-10 mb-3" id="price-range-display">
+    <input type="hidden" name="priceMin" id="priceMin" />
+    <input type="hidden" name="priceMax" id="priceMax" />
+    <div class="slider-range mt-2" id="price-slider"></div>
+</div>
+
+
+    <div class="filter-item filter-half mt-3">
+        <label>Dormitoare</label>
+        <select name="beds" id="property-beds">
+            <option value="">Oricare</option>
+            @for ($i = 1; $i <= 10; $i++)
+                <option value="{{ $i }}">{{ $i }}</option>
+            @endfor
+        </select>
+    </div>
+
+    <div class="filter-item filter-half filter-half-last mt-3">
+        <label>Băi</label>
+        <select name="baths" id="property-baths">
+            <option value="">Oricare</option>
+            @for ($i = 1; $i <= 10; $i++)
+                <option value="{{ $i }}">{{ $i }}</option>
+            @endfor
+        </select>
+    </div>
+
+    <div class="clear"></div>
+
+    <div class="filter-item">
+        <label>Suprafață</label>
+        <input type="number" name="areaMin" class="area-filter filter-1 mb-0" placeholder="Min" />
+        <input type="number" name="areaMax" class="area-filter mb-0" placeholder="Max" />
+        <div class="clear"></div>
+    </div>
+
+    <div class="filter-item">
+        <label class="label-submit p-0 m-0">Trimite</label>
+        <br />
+        <input type="submit" class="button alt mb-0" value="CAUTĂ PROPRIETATE" />
+    </div>
+</form>
+
+
             </div>
         </div>
 
@@ -428,11 +428,8 @@
     <script src="js/leaflet-gesture-handling.min.js"></script>
     <script src="js/leaflet-providers.js"></script>
     <script src="js/leaflet.markercluster.js"></script>
-    <script src="js/map4.js"></script>
     <script src="js/color-switcher.js"></script>
     <script src="js/inner.js"></script>
-    <script src="js/searched.js"></script>
-    <script src="js/popup.js"></script>
     <script src="js/light.js"></script>
 
     <script src="revolution/js/jquery.themepunch.tools.min.js"></script>
@@ -443,6 +440,34 @@
 
     <script src="js/leaflet.snogylop.js"></script>
     <script>
+        // Initialize the slider for the price range
+// Initialize the slider for the price range
+var priceSlider = document.getElementById('price-slider');
+var priceMinInput = document.getElementById('priceMin');
+var priceMaxInput = document.getElementById('priceMax');
+var priceRangeDisplay = document.getElementById('price-range-display');
+
+// Initialize the price slider
+$(priceSlider).slider({
+    range: true,
+    min: 0,
+    max: 1000000, // Adjust this to match the max price of properties
+    step: 1000,
+    values: [0, 1000000], // Set the initial range, adjust as needed
+    slide: function(event, ui) {
+        // Update the hidden inputs with the slider values
+        priceMinInput.value = ui.values[0];
+        priceMaxInput.value = ui.values[1];
+
+        // Update the display of the range
+        priceRangeDisplay.value = '€' + ui.values[0].toLocaleString() + ' - €' + ui.values[1].toLocaleString();
+    }
+});
+
+
+    </script>
+    <script>
+        
         // Initialize Leaflet map
         var map = L.map('map-leaflet', {
             center: [47.16347044782513, 24.78581920516772],
@@ -498,9 +523,16 @@
                             L.latLng([-90, 360])
                         ]
                     }).addTo(map);
-                    var form = document.querySelector('form'); // Make sure this selector matches your form
-                    var formData = new FormData(form);
-                    console.log(new URLSearchParams(formData).toString())
+                    var form = document.getElementById('filter-form');
+    var formData = new FormData(form);
+    
+    formData.delete('_token'); // Remove CSRF token since it's not needed for GET
+    if (priceMinInput.value && priceMaxInput.value) {
+        formData.set('priceMin', formatPrice(priceMinInput.value / 1000)); // Convert price to thousands and remove extra digits
+        formData.set('priceMax', formatPrice(priceMaxInput.value / 1000)); // Convert price to thousands and remove extra digits
+    }
+
+
                     fetch('/get_properties?' + new URLSearchParams(formData).toString())
                         .then(response => response.json())
                         .then(properties => {

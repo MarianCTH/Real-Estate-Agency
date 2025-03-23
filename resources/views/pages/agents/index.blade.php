@@ -123,7 +123,7 @@
                                                         <span>{{ $property->status->name }}</span> <!-- Sale / Rent -->
                                                     </div>
                                                     <div class="listing-img-content">
-                                                        <span class="listing-compact-title">{{ $property->title }} <i>{{ $property->location }}</i></span>
+                                                        <span class="listing-compact-title"><i>{{ $property->location }}</i></span>
                                                         <ul class="listing-hidden-content">
                                                             <li>Area <span>{{ $property->area }} sq ft</span></li>
                                                             <li>Rooms <span>{{ $property->rooms }}</span></li>

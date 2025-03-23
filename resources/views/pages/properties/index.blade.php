@@ -2,6 +2,35 @@
 @section('title', 'Proprietăți')
 
 @section('content')
+    <style>
+        .property-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            padding-top: 10px;
+        }
+
+        .property-title a {
+            display: block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        /* Add these new styles for the location */
+        .homes-address {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .homes-address a {
+            display: block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    </style>
     <div class="clearfix"></div>
     <!-- START SECTION PROPERTIES LISTING -->
     <section class="properties-right list featured portfolio blog pt-5">
@@ -85,9 +114,9 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-7 col-md-12 homes-content pb-0 mb-44" data-aos="fade-up">
+                            <div class="col-lg-7 col-md-12 homes-content py-3 mb-4" data-aos="fade-up">
                                 <!-- homes address -->
-                                <h3><a
+                                <h3 class="property-title"><a
                                         href="{{ route('property.show', ['id' => $property->id]) }}">{{ $property->title }}</a>
                                 </h3>
                                 <p class="homes-address mb-3">
@@ -276,7 +305,6 @@
     <script src="js/search.js"></script>
     <script src="js/light.js"></script>
     <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/popup.js"></script>
     <script src="js/searched.js"></script>
     <script src="js/ajaxchimp.min.js"></script>
     <script src="js/newsletter.js"></script>

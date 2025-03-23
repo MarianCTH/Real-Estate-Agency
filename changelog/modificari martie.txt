@@ -1,0 +1,4 @@
+1. Am rezolvat filtering-ul de pe pagina principala sa mearga
+2. am facut la pagina de proprietati sa arate la titlu si locatie sa fie pe o singura linie ca 
+sa nu dea overflow spatiul si sa arate urat
+3. Am facut pagina de editare proprietate sa poti edita toate datele si imaginile

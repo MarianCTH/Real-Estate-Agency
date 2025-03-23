@@ -157,29 +157,76 @@ class PropertyController extends Controller
     public function get_properties(Request $request)
     {
         $user = auth()->user();
-
-        $properties = Property::with('user.userDetail', 'type', 'status')->get();
-
+    
+        // Start with a query builder
+        $query = Property::with('user.userDetail', 'type', 'status');
+    
+        // Apply filters based on request parameters
+        if ($request->filled('property-status')) {
+            $query->whereHas('status', function ($q) use ($request) {
+                $q->where('name', $request->input('property-status'));
+            });
+        }
+    
+        if ($request->filled('property-type')) {
+            $query->whereHas('type', function ($q) use ($request) {
+                $q->where('name', $request->input('property-type'));
+            });
+        }
+    
+        if ($request->filled('location')) {
+            // Assuming location_id is the field to filter
+            $query->whereHas('location', function ($q) use ($request) {
+                $q->where('name', $request->input('location'));
+            });
+        }
+    
+        if ($request->filled('beds')) {
+            // Filter based on bedrooms (assuming your column name is 'bedrooms')
+            $query->where('bedrooms', $request->input('beds'));
+        }
+    
+        if ($request->filled('baths')) {
+            // Filter based on bathrooms (assuming your column name is 'bathrooms')
+            $query->where('bathrooms', $request->input('baths'));
+        }
+    
+        if ($request->filled('areaMin')) {
+            $query->where('size', '>=', $request->input('areaMin'));  // Assuming 'size' is the area
+        }
+    
+        if ($request->filled('areaMax')) {
+            $query->where('size', '<=', $request->input('areaMax'));  // Assuming 'size' is the area
+        }
+    
+        if ($request->filled('priceMin')) {
+            $query->where('price', '>=', (float) $request->input('priceMin'));
+        }
+        
+        if ($request->filled('priceMax')) {
+            $query->where('price', '<=', (float) $request->input('priceMax'));
+        }
+        
+        // Fetch filtered properties
+        $properties = $query->get();
+    
+        // Add 'is_favorited' field for authenticated users
         if ($user) {
-            // Get all favorite property IDs of the logged-in user
             $favoriteIds = $user->favorites->pluck('id')->toArray();
-
-            // Append is_favorited to each property
             $properties->transform(function ($property) use ($favoriteIds) {
                 $property->is_favorited = in_array($property->id, $favoriteIds);
                 return $property;
             });
         } else {
-            // If user is not authenticated, set is_favorited to false for all properties
             $properties->transform(function ($property) {
                 $property->is_favorited = false;
                 return $property;
             });
         }
-
+    
         return response()->json($properties);
     }
-
+    
 
     public function store(Request $request)
     {
@@ -300,29 +347,80 @@ class PropertyController extends Controller
 
     public function edit($id)
     {
-        $property = Property::findOrFail($id);  // Find the property by ID or fail
-        return view('pages.properties.edit', compact('property'));  // Return the edit form view
+        $property = Property::with(['type', 'status'])->findOrFail($id);
+        $title = 'Editare proprietate';
+        $propertyTypes = PropertyType::all();
+        $propertyStatuses = PropertyStatus::all();
+        $user = auth()->user();
+        $userDetails = UserDetail::where('user_id', $user->id)->first();
+
+        // Get existing images
+        $propertyImages = glob(public_path('img/properties/' . $property->id . '/*.*'));
+        $images = array_map(function($file) {
+            return [
+                'name' => basename($file),
+                'size' => filesize($file),
+                'path' => str_replace(public_path(), '', $file)
+            ];
+        }, $propertyImages ?: []);
+
+        return view('pages.properties.edit', compact(
+            'property', 
+            'title', 
+            'propertyTypes', 
+            'propertyStatuses', 
+            'user', 
+            'userDetails',
+            'images'
+        ));
     }
 
     public function update(Request $request, $id)
     {
         $property = Property::findOrFail($id);
 
-        // Validate and update the property
-        $request->validate([
-            'title' => 'required',
-            'location' => 'required',
+        $messages = [
+            'title.required' => 'Titlul proprietății este obligatoriu.',
+            'description.required' => 'Descrierea proprietății este obligatorie.',
+            'status_id.required' => 'Statusul proprietății este obligatoriu.',
+            'type_id.required' => 'Tipul proprietății este obligatoriu.',
+            'type_id.exists' => 'Tipul selectat nu este valid.',
+            'bedrooms.required' => 'Numărul de camere este obligatoriu.',
+            'bedrooms.integer' => 'Numărul de camere trebuie să fie un număr întreg.',
+            'price.required' => 'Prețul proprietății este obligatoriu.',
+            'price.numeric' => 'Prețul trebuie să fie un număr.',
+            'size.required' => 'Suprafața proprietății este obligatorie.',
+            'size.numeric' => 'Suprafața trebuie să fie un număr.',
+        ];
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:100',
+            'description' => 'required|string',
+            'status_id' => 'required|numeric',
+            'type_id' => 'required|integer|exists:property_types,id',
+            'bedrooms' => 'required|integer',
             'price' => 'required|numeric',
-        ]);
+            'size' => 'required|numeric',
+            'age' => 'nullable|string',
+            'bathrooms' => 'nullable|integer',
+            'garages' => 'nullable|integer',
+        ], $messages);
 
-        $property->title = $request->input('title');
-        $property->location = $request->input('location');
-        $property->price = $request->input('price');
+        // Set default values for nullable fields
+        $validated['age'] = $validated['age'] ?? '0';
+        $validated['bathrooms'] = $validated['bathrooms'] ?? 0;
+        $validated['garages'] = $validated['garages'] ?? 0;
 
-        // Save the property
-        $property->save();
+        // Update the property with validated data
+        $property->update($validated);
 
-        return redirect()->route('my-properties')->with('success', 'Property updated successfully!');
+        // Handle main image if provided
+        if ($request->has('main_image')) {
+            $property->image = $request->input('main_image');
+            $property->save();
+        }
+
+        return redirect()->route('my-properties')->with('success', 'Proprietatea a fost actualizată cu succes!');
     }
     public function destroy($id)
     {
