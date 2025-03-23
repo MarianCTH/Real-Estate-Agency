@@ -333,6 +333,7 @@
                     <div id="dropzone" class="dropzone"></div>
                     <input type="hidden" name="main_image" id="main_image" value="{{ $property->image }}">
                     <input type="hidden" name="property_id" id="property_id" value="{{ $property->id }}">
+                    <input type="hidden" name="deleted_files" id="deleted_files" value="">
                     <div class="dz-preview-container">
                         <!-- Existing images will be loaded here via JavaScript -->
                     </div>
@@ -400,6 +401,7 @@ let dropzone = new Dropzone("#dropzone", {
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     },
     init: function() {
+        let deletedFiles = [];
         this.element.classList.remove('dz-started');
         this.element.classList.remove('dz-processing');
         
@@ -412,7 +414,6 @@ let dropzone = new Dropzone("#dropzone", {
             file.filename = response.filename;
             this.element.classList.remove('dz-processing');
             
-            // Add set as main button if it doesn't exist
             if (!file.previewElement.querySelector('.dz-set-main-btn')) {
                 let setMainButton = document.createElement('button');
                 setMainButton.className = 'dz-set-main-btn';
@@ -431,7 +432,6 @@ let dropzone = new Dropzone("#dropzone", {
         });
 
         this.on('addedfile', function(file) {
-            // Add set as main button if it doesn't exist
             if (!file.previewElement.querySelector('.dz-set-main-btn')) {
                 let setMainButton = document.createElement('button');
                 setMainButton.className = 'dz-set-main-btn';
@@ -444,7 +444,6 @@ let dropzone = new Dropzone("#dropzone", {
                 file.previewElement.appendChild(setMainButton);
             }
 
-            // Set first image as main if none is set
             if (this.files.length === 1) {
                 setMainImage(file);
             }
@@ -455,29 +454,22 @@ let dropzone = new Dropzone("#dropzone", {
             let propertyId = document.getElementById('property_id').value;
             let filename = file.name || file.filename;
             
-            fetch('{{ route('deleteImage') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    property_id: propertyId,
-                    filename: filename
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    if (document.getElementById('main_image').value === filename) {
-                        if (this.files.length > 0) {
-                            setMainImage(this.files[0]);
-                        } else {
-                            document.getElementById('main_image').value = '';
-                        }
-                    }
-                }
-            });
+            // Add the filename to deletedFiles array
+            if (!deletedFiles.includes(filename)) {
+                deletedFiles.push(filename);
+                document.getElementById('deleted_files').value = JSON.stringify(deletedFiles);
+            }
+        });
+
+        // Add form submit handler
+        document.getElementById('property-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Update the deleted_files input with the current list of deleted files
+            document.getElementById('deleted_files').value = JSON.stringify(deletedFiles);
+            
+            // Submit the form
+            this.submit();
         });
 
         let dropzoneInstance = this;
@@ -528,13 +520,13 @@ let dropzone = new Dropzone("#dropzone", {
                 var mockFile = { 
                     name: file.name, 
                     size: file.size,
-                    accepted: true
+                    accepted: true,
+                    filename: file.name
                 };
                 dropzoneInstance.emit("addedfile", mockFile);
                 dropzoneInstance.emit("thumbnail", mockFile, file.path);
                 dropzoneInstance.emit("complete", mockFile);
                 
-                // Add set as main button
                 if (!mockFile.previewElement.querySelector('.dz-set-main-btn')) {
                     let setMainButton = document.createElement('button');
                     setMainButton.className = 'dz-set-main-btn';
@@ -547,7 +539,6 @@ let dropzone = new Dropzone("#dropzone", {
                     mockFile.previewElement.appendChild(setMainButton);
                 }
 
-                // Mark as main photo if it is the main image
                 if (file.name === document.getElementById('main_image').value) {
                     mockFile.previewElement.classList.add('main-photo');
                 }

@@ -532,10 +532,7 @@
                     '    <div class="dz-size"><span data-dz-size></span></div>\n' +
                     '    <div class="dz-filename"><span data-dz-name></span></div>\n' +
                     '  </div>\n' +
-                    '  <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>\n' +
                     '  <div class="dz-error-message"><span data-dz-errormessage></span></div>\n' +
-                    '  <button class="set-main-btn" onclick="setMainImage(this)">Imagine Principală</button>\n' +  // Add button
-                    '  <button class="dz-delete-btn" type="button">Elimină</button>\n' +
                     '  <div class="main-label" style="display:none;">Main Image</div>\n' +  // Hidden label for main image
                     '  <div class="dz-success-mark">\n' +
                     '    <svg width="54px" height="54px" viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">\n' +

@@ -379,46 +379,41 @@ class PropertyController extends Controller
     {
         $property = Property::findOrFail($id);
 
-        $messages = [
-            'title.required' => 'Titlul proprietății este obligatoriu.',
-            'description.required' => 'Descrierea proprietății este obligatorie.',
-            'status_id.required' => 'Statusul proprietății este obligatoriu.',
-            'type_id.required' => 'Tipul proprietății este obligatoriu.',
-            'type_id.exists' => 'Tipul selectat nu este valid.',
-            'bedrooms.required' => 'Numărul de camere este obligatoriu.',
-            'bedrooms.integer' => 'Numărul de camere trebuie să fie un număr întreg.',
-            'price.required' => 'Prețul proprietății este obligatoriu.',
-            'price.numeric' => 'Prețul trebuie să fie un număr.',
-            'size.required' => 'Suprafața proprietății este obligatorie.',
-            'size.numeric' => 'Suprafața trebuie să fie un număr.',
-        ];
-
-        $validated = $request->validate([
-            'title' => 'required|string|max:100',
-            'description' => 'required|string',
-            'status_id' => 'required|numeric',
-            'type_id' => 'required|integer|exists:property_types,id',
-            'bedrooms' => 'required|integer',
-            'price' => 'required|numeric',
-            'size' => 'required|numeric',
-            'age' => 'nullable|string',
-            'bathrooms' => 'nullable|integer',
-            'garages' => 'nullable|integer',
-        ], $messages);
-
-        // Set default values for nullable fields
-        $validated['age'] = $validated['age'] ?? '0';
-        $validated['bathrooms'] = $validated['bathrooms'] ?? 0;
-        $validated['garages'] = $validated['garages'] ?? 0;
-
-        // Update the property with validated data
-        $property->update($validated);
-
-        // Handle main image if provided
-        if ($request->has('main_image')) {
-            $property->image = $request->input('main_image');
-            $property->save();
+        // Handle deleted files first
+        if ($request->has('deleted_files')) {
+            $deletedFiles = json_decode($request->deleted_files, true);
+            if (is_array($deletedFiles)) {
+                foreach ($deletedFiles as $filename) {
+                    $filePath = public_path('img/properties/' . $id . '/' . $filename);
+                    if (File::exists($filePath)) {
+                        File::delete($filePath);
+                        
+                        // If the deleted file was the main image, clear it
+                        if ($property->image === $filename) {
+                            $property->image = null;
+                        }
+                    }
+                }
+            }
         }
+
+        // Update property fields that exist in the table
+        $property->title = $request->title;
+        $property->description = $request->description;
+        $property->status_id = $request->status_id;
+        $property->type_id = $request->type_id;
+        $property->bedrooms = $request->bedrooms;
+        $property->price = $request->price;
+        $property->size = $request->size;
+        $property->garages = $request->garages ?? $property->garages;
+        $property->bathrooms = $request->bathrooms ?? $property->bathrooms;
+
+        // Update main image if changed
+        if ($request->has('main_image') && $request->main_image) {
+            $property->image = $request->main_image;
+        }
+
+        $property->save();
 
         return redirect()->route('my-properties')->with('success', 'Proprietatea a fost actualizată cu succes!');
     }
