@@ -24,61 +24,140 @@
             /* Match the border radius for smooth edges */
         }
 
-        /* Container that holds the previews */
+        /* Dropzone styling */
+        .dropzone {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #fff;
+            min-height: 150px;
+            transition: all 0.3s ease;
+        }
+
+        .dropzone:hover {
+            border-color: #4CAF50;
+            background: #f9f9f9;
+        }
+
+        .dropzone .dz-message {
+            margin: 2em 0;
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        /* Preview container styling */
         .dz-preview {
+            position: relative;
             display: inline-block;
-            /* Display each preview inline */
-            margin-right: 10px;
-            /* Add some space between previews */
+            margin: 10px;
             vertical-align: top;
-            /* Align previews to the top */
+            background: #fff;
+            border-radius: 4px;
+            padding: 0;
+            width: 280px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
-        /* Additional optional styling */
-        .dz-image img {
-            max-width: 150px;
-            /* Adjust the width of the thumbnail */
-            height: auto;
-            /* Maintain aspect ratio */
-        }
-
-        /* To make the container responsive and wrap */
-        .dz-preview-container {
-            display: flex;
-            flex-wrap: wrap;
-            /* Makes the previews wrap to the next line if there's not enough space */
-        }
-
-        .dz-buttons {
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .dz-set-main-btn,
-        .dz-delete-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 5px 10px;
+        .dz-image {
+            width: 280px;
+            height: 210px;
+            position: relative;
+            background: #fff;
             cursor: pointer;
-            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .dz-image img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            transform: scale(1);
+            image-rendering: auto;
+        }
+
+        /* File details styling */
+        .dz-details {
+            padding: 4px 8px;
+            text-align: center;
+            background: #fff;
+            border-top: 1px solid #eee;
+        }
+
+        .dz-size {
+            font-size: 11px;
+            color: #666;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        /* Buttons styling */
+        .dz-buttons {
+            display: flex;
+            width: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         .dz-delete-btn {
+            width: 100%;
+            padding: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+            margin: 0;
             background-color: #f44336;
-            /* Red color for delete button */
+            color: white;
         }
 
-        .dz-set-main-btn:hover,
         .dz-delete-btn:hover {
-            opacity: 0.8;
+            background-color: #d32f2f;
         }
 
-        /* Highlight the main photo preview */
+        /* Main photo highlight */
         .main-photo {
             border: 2px solid #4CAF50;
-            background-color: #f0f0f0;
+        }
+
+        .main-photo::after {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #4CAF50;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        /* Progress bar styling */
+        .dz-progress {
+            display: none;
+        }
+
+        /* Error message styling */
+        .dz-error-message {
+            color: #f44336;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 4px;
+            padding: 0 8px;
         }
 
         .prperty-submit-button {
@@ -522,21 +601,34 @@
 
     <script>
         let dropzone = new Dropzone("#dropzone", {
-            url: '{{ route('uploadImages') }}', // Upload route
-            autoProcessQueue: false, // Do not auto-upload images
-            maxFilesize: 5, // MB
+            url: '{{ route('uploadImages') }}',
+            autoProcessQueue: false,
+            maxFilesize: 5,
             acceptedFiles: 'image/*',
+            thumbnailWidth: 280,
+            thumbnailHeight: 210,
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
+            previewTemplate: `
+                <div class="dz-preview dz-file-preview">
+                    <div class="dz-image">
+                        <img data-dz-thumbnail />
+                    </div>
+                    <div class="dz-details">
+                        <div class="dz-size" data-dz-size></div>
+                    </div>
+                    <div class="dz-error-message"><span data-dz-errormessage></span></div>
+                </div>
+            `,
             init: function() {
                 this.on('sending', function(file, xhr, formData) {
                     let propertyId = document.getElementById('property_id').value;
-                    formData.append('property_id', propertyId); // Add property_id to the formData
+                    formData.append('property_id', propertyId);
                 });
                 this.on('success', function(file, response) {
-                        file.filename = response.filename; // Store filename in the file object
-                        console.log('Image uploaded successfully:', response.filename);
+                    file.filename = response.filename;
+                    console.log('Image uploaded successfully:', response.filename);
                 });
                 this.on('error', function(file, response) {
                     console.error('Image upload error:', response);
@@ -544,10 +636,38 @@
                 let dropzoneInstance = this;
 
                 dropzoneInstance.on('addedfile', function(file) {
+                    // Create buttons container
+                    let buttonsContainer = document.createElement('div');
+                    buttonsContainer.className = 'dz-buttons';
+
+                    // Create Remove button
+                    let removeBtn = document.createElement('button');
+                    removeBtn.className = 'dz-delete-btn';
+                    removeBtn.textContent = 'Elimină';
+                    removeBtn.type = 'button';
+                    removeBtn.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        dropzoneInstance.removeFile(file);
+                    };
+
+                    // Add click event to image container
+                    file.previewElement.querySelector('.dz-image').onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setMainImage(file);
+                    };
+
+                    // Add buttons to container
+                    buttonsContainer.appendChild(removeBtn);
+
+                    // Add buttons container to preview element
+                    file.previewElement.appendChild(buttonsContainer);
+
+                    // Set first uploaded file as main image
                     if (dropzoneInstance.files.length === 1) {
                         setMainImage(file);
                     }
-
                 });
 
                 function setMainImage(file) {

@@ -82,19 +82,32 @@
                             <div class="widget-boxed-body">
                                 <div class="recent-post">
                                     @foreach($recentProperties as $property)
-                                    <div class="recent-main my-4">
-                                        <div class="recent-img">
-                                            <a href="{{ route('property.show', ['id' => $property->id]) }}">
-                                                <img src="{{ asset('img/properties/' . $property->id . '/' . $property->image) }}" alt="{{ $property->title }}">
+                                    <div class="recent-main d-flex align-items-center py-3">
+                                        <div class="recent-img" style="min-width: 120px;">
+                                            <a href="{{ route('property.show', ['id' => $property->id]) }}" class="position-relative d-block">
+                                                <img src="{{ asset('img/properties/' . $property->id . '/' . $property->image) }}" 
+                                                     alt="{{ $property->title }}"
+                                                     class="img-fluid rounded" 
+                                                     style="width: 120px; height: 90px; object-fit: cover;">
+                                                <div class="price-tag position-absolute bg-primary text-white px-2 py-1" 
+                                                     style="font-size: 0.8rem; top: 5px; left: 5px; z-index: 1;">
+                                                    ${{ number_format($property->price, 0) }}
+                                                </div>
                                             </a>
                                         </div>
-                                        <div class="info-img">
-                                            <a href="{{ route('property.show', ['id' => $property->id]) }}">
-                                            <h6>{{ $property->title }}</h6>
+                                        <div class="info-img ml-3 flex-grow-1">
+                                            <a href="{{ route('property.show', ['id' => $property->id]) }}" class="text-decoration-none">
+                                                <h6 class="text-dark mb-1" style="font-size: 0.95rem;">{{ Str::limit($property->title, 40) }}</h6>
                                             </a>
-                                            <p>${{ number_format($property->price, 0) }}</p>
+                                            <div class="location">
+                                                <i class="fa fa-map-marker text-primary"></i>
+                                                <small class="text-muted ml-1">{{ Str::limit($property->location, 30) }}</small>
+                                            </div>
                                         </div>
                                     </div>
+                                    @if(!$loop->last)
+                                        <hr class="my-0">
+                                    @endif
                                     @endforeach
                                 </div>
                             </div>

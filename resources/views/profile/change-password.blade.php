@@ -2,54 +2,86 @@
 @section('title', $title)
 
 @section('content')
-    <div class="my-address" style="margin-bottom: 11%">
-        <h3 class="heading pt-0">{{ $title }}</h3>
-        <form action="{{ route('password.update') }}" method="POST">
-            @csrf
-            @method('PUT')
+    <div class="single-add-property">
+        <h3>{{ $title }}</h3>
+        <div class="property-form-group">
+            <form action="{{ route('password.update') }}" method="POST" id="password-form">
+                @csrf
+                @method('PUT')
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="form-group name">
-                        <label>Parola curentă</label>
-                        <input type="password" name="current_password" class="form-control" placeholder="Parola curentă" required>
-                        @if ($errors->has('current_password'))
-                            <span class="text-danger">{{ $errors->first('current_password') }}</span>
-                        @endif
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </div>
-                <div class="col-lg-12">
-                    <div class="form-group email">
-                        <label>Parola nouă</label>
-                        <input type="password" name="new_password" class="form-control" placeholder="Parola nouă" required>
-                        @if ($errors->has('new_password'))
-                            <span class="text-danger">{{ $errors->first('new_password') }}</span>
-                        @endif
-                    </div>
-                </div>
-                <div class="col-lg-12">
-                    <div class="form-group subject">
-                        <label>Confirmă parola nouă</label>
-                        <input type="password" name="confirm_new_password" class="form-control" placeholder="Confirmă parola nouă" required>
-                        @if ($errors->has('confirm_new_password'))
-                            <span class="text-danger">{{ $errors->first('confirm_new_password') }}</span>
-                        @endif
-                    </div>
-                </div>
-                <div class="col-lg-12">
-                    <div class="send-btn mt-2">
-                        <button type="submit" class="btn btn-common">Schimbă parola</button>
-                    </div>
-                </div>
-            </div>
-        </form>
+                @endif
 
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
 
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>
+                            <label for="current_password">Parola curentă</label>
+                            <input type="password" 
+                                   name="current_password" 
+                                   id="current_password"
+                                   class="form-control @error('current_password') is-invalid @enderror" 
+                                   placeholder="Introduceți parola curentă">
+                        </p>
+                        @error('current_password')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>
+                            <label for="new_password">Parola nouă</label>
+                            <input type="password" 
+                                   name="new_password" 
+                                   id="new_password"
+                                   class="form-control @error('new_password') is-invalid @enderror" 
+                                   placeholder="Introduceți parola nouă">
+                        </p>
+                        @error('new_password')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>
+                            <label for="confirm_new_password">Confirmă parola nouă</label>
+                            <input type="password" 
+                                   name="confirm_new_password" 
+                                   id="confirm_new_password"
+                                   class="form-control @error('confirm_new_password') is-invalid @enderror" 
+                                   placeholder="Confirmați parola nouă">
+                        </p>
+                        @error('confirm_new_password')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div id="validation-message" class="alert alert-danger mt-2" style="display: none;"></div>
+
+                <div class="prperty-submit-button">
+                    <button type="submit" class="btn btn-primary btn-lg">Schimbă parola</button>
+                </div>
+            </form>
+        </div>
     </div>
 @endsection
 
@@ -92,16 +124,28 @@
             var newPassword = document.getElementById('new_password').value;
             var confirmNewPassword = document.getElementById('confirm_new_password').value;
             var validationMessageDiv = document.getElementById('validation-message');
+            var hasError = false;
 
-            // Clear previous validation messages
+            validationMessageDiv.style.display = 'none';
             validationMessageDiv.textContent = '';
 
             if (!currentPassword || !newPassword || !confirmNewPassword) {
-                validationMessageDiv.textContent = 'Completează toate câmpurile.';
-                event.preventDefault(); // Prevent form submission
+                validationMessageDiv.textContent = 'Vă rugăm să completați toate câmpurile obligatorii.';
+                hasError = true;
+            } else if (newPassword.length < 8) {
+                validationMessageDiv.textContent = 'Parola nouă trebuie să conțină cel puțin 8 caractere.';
+                hasError = true;
             } else if (newPassword !== confirmNewPassword) {
-                validationMessageDiv.textContent = 'Parolele nu corespund.';
-                event.preventDefault(); // Prevent form submission
+                validationMessageDiv.textContent = 'Parolele noi introduse nu corespund.';
+                hasError = true;
+            } else if (currentPassword === newPassword) {
+                validationMessageDiv.textContent = 'Parola nouă trebuie să fie diferită de parola curentă.';
+                hasError = true;
+            }
+
+            if (hasError) {
+                validationMessageDiv.style.display = 'block';
+                event.preventDefault();
             }
         });
     </script>

@@ -76,7 +76,7 @@ Route::post('confirm-password', [ConfirmablePasswordController::class, 'store'])
 Route::middleware('auth')->group(function () {
     Route::get('/dash', [ProfileController::class, 'getDash'])->name('dash');
     Route::get('/profile', [ProfileController::class, 'getProfile'])->name('profile');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::get('/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
     Route::put('/password/update', [ProfileController::class, 'updatePassword'])->name('password.update');
 
