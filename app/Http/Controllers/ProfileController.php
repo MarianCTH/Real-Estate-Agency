@@ -142,5 +142,53 @@ class ProfileController extends Controller
         return back()->with('success', 'Parola a fost schimbată cu succes!');
     }
 
+    public function updateProfile(Request $request)
+    {
+        $messages = [
+            'name.required' => 'Numele este obligatoriu.',
+            'name.string' => 'Numele trebuie să fie text.',
+            'name.max' => 'Numele nu poate depăși 255 de caractere.',
+            'email.required' => 'Adresa de email este obligatorie.',
+            'email.email' => 'Adresa de email trebuie să fie validă.',
+            'email.unique' => 'Această adresă de email este deja folosită.',
+            'phone.max' => 'Numărul de telefon nu poate depăși 255 de caractere.',
+            'address.max' => 'Adresa nu poate depăși 255 de caractere.',
+        ];
+
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,' . auth()->id(),
+                'phone' => 'nullable|string|max:255',
+                'address' => 'nullable|string|max:255',
+            ], $messages);
+
+            // Update user
+            $user = auth()->user();
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
+            
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+            
+            $user->save();
+
+            // Update or create user details
+            $userDetails = UserDetail::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'phone' => $validated['phone'],
+                    'address' => $validated['address'],
+                ]
+            );
+
+            return redirect()->back()->with('success', 'Profilul a fost actualizat cu succes!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'A apărut o eroare la actualizarea profilului. Vă rugăm să încercați din nou.');
+        }
+    }
 
 }

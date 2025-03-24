@@ -1,90 +1,185 @@
 @extends('layouts.userpanel')
 @section('title', $title)
 
-
 @section('content')
-    <div class="my-properties">
-        <div class="widget-boxed-header">
-            <h4>Membrii societății {{ $company->name }}</h4>
-        </div>
-        <table class="table-responsive">
-            <thead>
-                <tr>
-                    <th class="pl-2">Membru</th>
-                    <th class="p-0"></th>
-                    <th>Creat la</th>
-                    <th>Anunțuri postate</th>
-                    <th>Acțiuni</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($company->members as $member)
-                <tr>
-                    <td class="image myelist">
-                        <a href=""><img alt="property-image" style="width:80px" src="{{ asset('img/users/' . $member->image) }}" class="img-fluid"></a>
-                    </td>
-                    <td>
-                        <div class="inner">
-                            <a href=""><h2>{{ $member->name }}</h2></a>
-                            <figure><i class="lni lni-map-marker"></i> {{ $member->address ?? '' }}</figure>
+<section class="dashboard-section">
+    <div class="container">
+        <section class="headings-2 pt-0 pb-4">
+            <div class="pro-wrapper">
+                <div class="detail-wrapper-body">
+                    <div class="listing-title-bar">
+                        <div class="text-heading text-left">
+                            <p class="pb-2"><a href="{{ route('welcome') }}">Acasă </a> &nbsp;/&nbsp; <span>Membrii Societății</span></p>
                         </div>
-                    </td>
-                    <td>{{ $member->created_at->format('d-m-Y') }}</td> <!-- Join date -->
-                    <td>{{ $member->properties()->count() }}</td> <!-- Post count -->
-                    <td>
-                        @if(auth()->id() === $company->leader_id && $member->id !== $company->leader_id)
-                            <form action="{{ route('companies.members.remove', [$company->id, $member->id]) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Elimină</button>
-                            </form>
-                        @endif
-                    </td>
-                </tr>
-                @endforeach
+                        <h3>MEMBRII SOCIETĂȚII {{ strtoupper($company->name) }}</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                @foreach($company->joinRequests as $request)
-                @if($request->status === 'pending')
-                <tr>
-                    <td class="image myelist">
-                        <a href=""><img alt="property-image" src="{{ asset('img/users/' . $request->user->image) }}" class="img-fluid"></a>
-                    </td>
-                    <td>
-                        <div class="inner">
-                            <a href=""><h2>{{ $request->user->name }}</h2></a>
-                            <figure><i class="lni lni-map-marker"></i> {{ $request->user->address ?? 'N/A' }}</figure>
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <div class="dashborad-box mb-0">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
-                    </td>
-                    <td>—</td> <!-- No acceptance date yet -->
-                    <td>—</td> <!-- No posts yet -->
-                    <td>
-                        <form action="{{ route('companies.approveJoinRequest', ['company' => $company->id, 'request' => $request->id]) }}" method="POST" style="display:inline;">
-                            @csrf
-                            <button type="submit" class="btn btn-success">Aprobă</button>
-                        </form>
-                        <form action="{{ route('companies.rejectJoinRequest', ['company' => $company->id, 'request' => $request->id]) }}" method="POST" style="display:inline;">
-                            @csrf
-                            <button type="submit" class="btn btn-danger">Respinge</button>
-                        </form>
-                    </td>
-                </tr>
-                @endif
-                @endforeach
-            </tbody>
-        </table>
-        @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-        @endif
+                    @endif
 
-        @if(session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-        @endif
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
 
+                    <div class="widget-boxed-header">
+                        <h4>Membrii Activi</h4>
+                    </div>
+                    <div class="widget-boxed-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Membru</th>
+                                        <th>Informații</th>
+                                        <th>Data Înregistrării</th>
+                                        <th>Anunțuri</th>
+                                        <th>Acțiuni</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($company->members as $member)
+                                    <tr>
+                                        <td style="width: 100px;">
+                                            <div class="agent-photo">
+                                                <a href="{{ route('user.properties', $member->id) }}">
+                                                    <img src="{{ asset('img/users/' . $member->image) }}" 
+                                                         alt="{{ $member->name }}" 
+                                                         class="img-fluid rounded-circle" 
+                                                         style="width: 80px; height: 80px; object-fit: cover;">
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="agent-info">
+                                                <h6 class="mb-1">
+                                                    <a href="{{ route('user.properties', $member->id) }}" class="text-dark">
+                                                        {{ $member->name }}
+                                                    </a>
+                                                </h6>
+                                                <p class="text-muted mb-0">
+                                                    <i class="fa fa-map-marker text-primary mr-1"></i>
+                                                    {{ $member->userDetail->address ?? 'Adresa nu este setată' }}
+                                                </p>
+                                            </div>
+                                        </td>
+                                        <td>{{ \Carbon\Carbon::parse($member->created_at)->format('d.m.Y') }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="announcements-count">
+                                                    <span class="badge" style="background-color: #274abb; color: white; padding: 6px 12px; border-radius: 50px; font-size: 13px; font-weight: 500;">
+                                                        {{ $member->properties()->count() }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if(auth()->id() === $company->leader_id && $member->id !== $company->leader_id)
+                                                <form action="{{ route('companies.members.remove', [$company->id, $member->id]) }}" 
+                                                      method="POST" 
+                                                      onsubmit="return confirm('Sunteți sigur că doriți să eliminați acest membru?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="fa fa-trash mr-1"></i> Elimină
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    @if($company->joinRequests->where('status', 'pending')->count() > 0)
+                    <div class="widget-boxed-header mt-5">
+                        <h4>Cereri de Înscriere în Așteptare</h4>
+                    </div>
+                    <div class="widget-boxed-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Membru</th>
+                                        <th>Informații</th>
+                                        <th>Data Cererii</th>
+                                        <th>Acțiuni</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($company->joinRequests as $request)
+                                    @if($request->status === 'pending')
+                                    <tr>
+                                        <td style="width: 100px;">
+                                            <div class="agent-photo">
+                                                <img src="{{ asset('img/users/' . $request->user->image) }}" 
+                                                     alt="{{ $request->user->name }}" 
+                                                     class="img-fluid rounded-circle" 
+                                                     style="width: 80px; height: 80px; object-fit: cover;">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="agent-info">
+                                                <h6 class="mb-1">{{ $request->user->name }}</h6>
+                                                <p class="text-muted mb-0">
+                                                    <i class="fa fa-map-marker text-primary mr-1"></i>
+                                                    {{ $request->user->userDetail->address ?? 'Adresa nu este setată' }}
+                                                </p>
+                                            </div>
+                                        </td>
+                                        <td>{{ \Carbon\Carbon::parse($request->created_at)->format('d.m.Y') }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <form action="{{ route('companies.approveJoinRequest', ['company' => $company->id, 'request' => $request->id]) }}" 
+                                                      method="POST" 
+                                                      class="mr-2">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                        <i class="fa fa-check mr-1"></i> Aprobă
+                                                    </button>
+                                                </form>
+                                                <form action="{{ route('companies.rejectJoinRequest', ['company' => $company->id, 'request' => $request->id]) }}" 
+                                                      method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="fa fa-times mr-1"></i> Respinge
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 @endsection
+
 @section('includes-js')
     <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
     <script src="{{ asset('js/popper.min.js') }}"></script>

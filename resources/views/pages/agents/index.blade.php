@@ -51,25 +51,46 @@
                                 </div>
                             </a>
                             <div class="news-item-text">
-                                <a href="{{ route('user.properties', $agent->id) }}"><h3>{{ $agent->name }}</h3></a>
+                                <h3>{{ $agent->name }}</h3>
                                 <div class="the-agents">
-                                    <ul class="the-agents-details">
-                                        <li><a href="#">Office: {{ $agent->office_phone }}</a></li>
-                                        <li><a href="#">Mobile: {{ $agent->mobile_phone }}</a></li>
-                                        <li><a href="#">Fax: {{ $agent->fax }}</a></li>
-                                        <li><a href="#">Email: {{ $agent->email }}</a></li>
-                                        @if ($agent->company)
-                                            <li><a href="#">Societate: {{ $agent->company->name }}</a></li>
-                                        @endif
+                                    <ul class="list-unstyled mb-4" style="line-height: 2;">
+                                        <li>
+                                            <span class="la la-phone">
+                                                <i class="fa fa-phone text-muted"></i>
+                                            </span>
+                                            <a href="tel:{{ $agent->userDetail->phone ?? '#' }}" class="text-dark">
+                                                {{ $agent->userDetail->phone ?? 'Număr de telefon necompletat' }}
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="la la-envelope-o">
+                                                <i class="fa fa-envelope text-muted"></i>
+                                            </span>
+                                            <a href="mailto:{{ $agent->email }}" class="text-dark">
+                                                {{ $agent->email }}
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="la la-map-marker">
+                                                <i class="fa fa-map-marker text-muted"></i>
+                                            </span>
+                                            <span class="text-dark">{{ $agent->userDetail->address ?? 'Adresa nu este setată' }}</span>
+                                        </li>
+                                        <li>
+                                            <span class="la la-clock-o">
+                                                <i class="fa fa-clock-o text-muted"></i>
+                                            </span>
+                                            <span class="text-dark">Membru din: {{ ucfirst(\Carbon\Carbon::parse($agent->created_at)->locale('ro')->isoFormat('MMMM YYYY')) }}</span>
+                                        </li>
                                     </ul>
                                 </div>
-                                <div class="news-item-bottom">
-                                    <a href="{{ route('user.properties', $agent->id) }}" class="news-link">Vezi proprietăți</a>
-                                    <div class="admin">
-                                        @if ($agent->company)
-                                            <img src="{{ asset($agent->company->image) }}" alt="">
-                                        @endif
-                                    </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="{{ route('user.properties', $agent->id) }}" class="btn btn-primary px-4">
+                                        Vezi proprietăți
+                                    </a>
+                                    @if ($agent->company)
+                                        <img src="{{ asset($agent->company->image) }}" alt="{{ $agent->company->name }}" style="max-height: 35px;">
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -90,19 +111,32 @@
                             <div class="widget-boxed-body">
                                 <div class="recent-post">
                                     @foreach($recentProperties as $property)
-                                    <div class="recent-main my-4">
-                                        <div class="recent-img">
-                                            <a href="{{ route('property.show', ['id' => $property->id]) }}">
-                                                <img src="{{ asset('img/properties/' . $property->id . '/' . $property->image) }}" alt="{{ $property->title }}">
+                                    <div class="recent-main d-flex align-items-center py-3">
+                                        <div class="recent-img" style="min-width: 120px;">
+                                            <a href="{{ route('property.show', ['id' => $property->id]) }}" class="position-relative d-block">
+                                                <img src="{{ asset('img/properties/' . $property->id . '/' . $property->image) }}" 
+                                                     alt="{{ $property->title }}"
+                                                     class="img-fluid rounded" 
+                                                     style="width: 120px; height: 90px; object-fit: cover;">
+                                                <div class="price-tag position-absolute bg-primary text-white px-2 py-1" 
+                                                     style="font-size: 0.8rem; top: 5px; left: 5px; z-index: 1;">
+                                                    ${{ number_format($property->price, 0) }}
+                                                </div>
                                             </a>
                                         </div>
-                                        <div class="info-img">
-                                            <a href="{{ route('property.show', ['id' => $property->id]) }}">
-                                            <h6>{{ $property->title }}</h6>
+                                        <div class="info-img ml-3 flex-grow-1">
+                                            <a href="{{ route('property.show', ['id' => $property->id]) }}" class="text-decoration-none">
+                                                <h6 class="text-dark mb-1" style="font-size: 0.95rem;">{{ Str::limit($property->title, 40) }}</h6>
                                             </a>
-                                            <p>${{ number_format($property->price, 0) }}</p>
+                                            <div class="location">
+                                                <i class="fa fa-map-marker text-primary"></i>
+                                                <small class="text-muted ml-1">{{ Str::limit($property->location, 30) }}</small>
+                                            </div>
                                         </div>
                                     </div>
+                                    @if(!$loop->last)
+                                        <hr class="my-0">
+                                    @endif
                                     @endforeach
                                 </div>
                             </div>

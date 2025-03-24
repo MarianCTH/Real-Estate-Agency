@@ -85,3 +85,68 @@
     <!-- Header / End -->
 
 </header>
+
+<style>
+#header-container {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+#navigation ul li a {
+    font-size: 15px;
+    font-weight: 500;
+    color: #2c3e50;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+#navigation ul li a:hover {
+    color: #3B5998;
+}
+
+.button.border {
+    white-space: nowrap;
+    padding: 8px 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.button.border i {
+    font-size: 14px;
+}
+
+.header-widget.sign-in a {
+    font-size: 15px;
+    font-weight: 500;
+    color: #2c3e50;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.header-widget.sign-in a:hover {
+    color: #3B5998;
+}
+
+.header-user-name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.header-user-menu ul {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-user-menu ul li a {
+    font-size: 14px;
+    color: #2c3e50;
+    padding: 10px 20px;
+    transition: background-color 0.2s ease;
+}
+
+.header-user-menu ul li a:hover {
+    background-color: #f8f9fa;
+    color: #3B5998;
+}
+</style>

@@ -7,11 +7,30 @@
     <div class="widget-boxed-header">
         <h4>Detaliile profilului</h4>
     </div>
+
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
     <div class="sidebar-widget author-widget2">
         <div class="author-box clearfix">
             <img src="{{ asset('img/users/' . auth()->user()->image) }}" alt="imaginea autorului" class="author__img">
             <h4 class="author__title">{{ Auth::user()->name }}</h4>
-            <p class="author__meta">Agent imobiliar</p>
+            <p class="author__meta">{{ Auth::user()->type }}</p>
         </div>
         <ul class="author__contact">
             <li><span class="la la-map-marker"><i class="fa fa-map-marker"></i></span>{{ $userDetails->address ?? 'Adresa nu este setată' }}</li>
@@ -22,49 +41,73 @@
 
     <h4 class="heading pt-5">Informații personale</h4>
     <div class="section-inforamation">
-        <form action="{{ route('profile.update') }}" method="POST">
+        <form action="{{ route('profile.update') }}" method="POST" id="profile-form">
             @csrf
             @method('PATCH')
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-12">
                     <div class="form-group">
-                        <label>Prenume</label>
-                        <input type="text" class="form-control" name="first_name" value="{{ Auth::user()->first_name }}" placeholder="Introduceți prenumele">
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label>Nume de familie</label>
-                        <input type="text" class="form-control" name="last_name" value="{{ Auth::user()->last_name }}" placeholder="Introduceți numele de familie">
+                        <label>Nume complet</label>
+                        <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                               name="name" 
+                               value="{{ old('name', Auth::user()->name) }}" 
+                               placeholder="Introduceți numele complet">
+                        @error('name')
+                            <div class="alert alert-danger mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label>Adresă de email</label>
-                        <input type="email" class="form-control" name="email" value="{{ Auth::user()->email }}" placeholder="Ex: exemplu@domeniu.com">
+                        <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                               name="email" 
+                               value="{{ old('email', Auth::user()->email) }}" 
+                               placeholder="Ex: exemplu@domeniu.com">
+                        @error('email')
+                            <div class="alert alert-danger mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label>Număr de telefon</label>
-                        <input type="text" class="form-control" name="phone" value="{{ !empty($userDetails->phone) ? $userDetails->phone : '' }}" placeholder="Ex: +40-700-000-000">
+                        <input type="text" class="form-control @error('phone') is-invalid @enderror" 
+                               name="phone" 
+                               value="{{ old('phone', $userDetails->phone ?? '') }}" 
+                               placeholder="Ex: +40-700-000-000">
+                        @error('phone')
+                            <div class="alert alert-danger mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>Tip utilizator</label>
+                        <input type="text" 
+                               class="form-control" 
+                               value="{{ Auth::user()->type }}" 
+                               disabled>
                     </div>
                 </div>
                 <div class="col-lg-12">
                     <div class="form-group">
                         <label>Adresă</label>
-                        <textarea name="address" class="form-control" placeholder="Introduceți adresa">{{ !empty($userDetails->address) ? $userDetails->address : '' }}</textarea>
-                    </div>
-                </div>
-                <div class="col-lg-12">
-                    <div class="form-group">
-                        <label>Despre tine</label>
-                        <textarea name="about" class="form-control" placeholder="Scrieți despre dvs.">{{ Auth::user()->about }}</textarea>
+                        <textarea name="address" 
+                                  class="form-control @error('address') is-invalid @enderror" 
+                                  placeholder="Introduceți adresa">{{ old('address', $userDetails->address ?? '') }}</textarea>
+                        @error('address')
+                            <div class="alert alert-danger mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg mt-2">Actualizează</button>
+            <div id="validation-message" class="alert alert-danger mt-2" style="display: none;"></div>
+
+            <div class="prperty-submit-button">
+                <button type="submit" class="btn btn-primary btn-lg">Actualizează</button>
+            </div>
         </form>
     </div>
 </div>
@@ -104,4 +147,40 @@
     <script src="{{ asset('js/color-switcher.js') }}"></script>
     <script src="{{ asset('js/dropzone.js') }}"></script>
     <script src="{{ asset('js/script.js') }}"></script>
+    <script>
+        document.getElementById('profile-form').addEventListener('submit', function(event) {
+            var name = document.querySelector('input[name="name"]').value;
+            var email = document.querySelector('input[name="email"]').value;
+            var phone = document.querySelector('input[name="phone"]').value;
+            var validationMessageDiv = document.getElementById('validation-message');
+            var hasError = false;
+
+            validationMessageDiv.style.display = 'none';
+            validationMessageDiv.textContent = '';
+
+            // Basic email validation regex
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            // Romanian phone number validation regex
+            var phoneRegex = /^(\+4|)?(07[0-8]{1}[0-9]{1}|02[0-9]{2}|03[0-9]{2}){1}?(\s|\.|\-)?([0-9]{3}(\s|\.|\-|)){2}$/;
+
+            if (!name) {
+                validationMessageDiv.textContent = 'Numele este obligatoriu.';
+                hasError = true;
+            } else if (!email) {
+                validationMessageDiv.textContent = 'Adresa de email este obligatorie.';
+                hasError = true;
+            } else if (!emailRegex.test(email)) {
+                validationMessageDiv.textContent = 'Vă rugăm să introduceți o adresă de email validă.';
+                hasError = true;
+            } else if (phone && !phoneRegex.test(phone)) {
+                validationMessageDiv.textContent = 'Vă rugăm să introduceți un număr de telefon valid (format românesc).';
+                hasError = true;
+            }
+
+            if (hasError) {
+                validationMessageDiv.style.display = 'block';
+                event.preventDefault();
+            }
+        });
+    </script>
 @endsection
