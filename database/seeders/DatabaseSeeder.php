@@ -12,6 +12,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             PropertySeeder::class,
             UserDetailSeeder::class,
+            AdditionalPropertiesSeeder::class,
+            UpdatePropertyImagesSeeder::class
         ]);
     }
 }

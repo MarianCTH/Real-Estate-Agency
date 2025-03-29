@@ -2,6 +2,21 @@
 @section('title', $title)
 
 @section('content')
+<style>
+    .bootstrap-select .dropdown-menu {
+        z-index: 9999 !important;
+        position: absolute !important;
+    }
+    .bootstrap-select {
+        position: relative !important;
+    }
+    .dropdown-menu {
+        z-index: 9999 !important;
+    }
+    .selectpicker + .dropdown-menu {
+        z-index: 9999 !important;
+    }
+</style>
 <section class="blog blog-section portfolio pt-5">
     <div class="container">
         <section class="headings-2 pt-0 pb-55">
@@ -23,20 +38,40 @@
                         <div class="detail-wrapper-body">
                             <div class="listing-title-bar">
                                 <div class="text-heading text-left">
-                                    <p class="font-weight-bold mb-0 mt-3">{{ $agents->count() }} Agenți afișați în pagina curentă</p>
+                                    <form action="{{ route('agents') }}" method="GET" class="mb-0">
+                                        <div class="input-group border rounded input-group-lg w-auto">
+                                            <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="Caută agenți..." value="{{ request('search') }}">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="submit">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="sortby" value="{{ request('sortby', 'name') }}">
+                                        <input type="hidden" name="direction" value="{{ request('direction', 'asc') }}">
+                                    </form>
                                 </div>
                             </div>
                         </div>
                         <div class="cod-pad single detail-wrapper mr-2 mt-0 d-flex justify-content-md-end align-items-center grid">
-                            <div class="input-group border rounded input-group-lg w-auto mr-4">
-                                <label class="input-group-text bg-transparent border-0 text-uppercase letter-spacing-093 pr-1 pl-3" for="inputGroupSelect01"><i class="fas fa-align-left fs-16 pr-2"></i>Sortează:</label>
-                                <select class="form-control border-0 bg-transparent shadow-none p-0 selectpicker sortby" data-style="bg-transparent border-0 font-weight-600 btn-lg pl-0 pr-3" id="inputGroupSelect01" name="sortby">
-                                    <option selected>Alfabet</option>
-                                    <option value="1">Agenție</option>
-                                    <option value="1">Numărul de proprietăți</option>
-                                </select>
-                            </div>
-
+                            <form action="{{ route('agents') }}" method="GET" class="d-flex align-items-center">
+                                <input type="hidden" name="search" value="{{ request('search') }}">
+                                <div class="input-group border rounded input-group-lg w-auto mr-4">
+                                    <label class="input-group-text bg-transparent border-0 text-uppercase letter-spacing-093 pr-1 pl-3" for="inputGroupSelect01">
+                                        <i class="fas fa-align-left fs-16 pr-2"></i>Sortează:
+                                    </label>
+                                    <select class="form-control border-0 bg-transparent shadow-none p-0 selectpicker sortby" 
+                                            data-style="bg-transparent border-0 font-weight-600 btn-lg pl-0 pr-3" 
+                                            id="inputGroupSelect01" 
+                                            name="sortby"
+                                            onchange="this.form.submit()">
+                                        <option value="name" {{ request('sortby') == 'name' ? 'selected' : '' }}>Nume</option>
+                                        <option value="company" {{ request('sortby') == 'company' ? 'selected' : '' }}>Agenție</option>
+                                        <option value="properties" {{ request('sortby') == 'properties' ? 'selected' : '' }}>Proprietăți</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" name="direction" value="{{ request('direction') == 'asc' ? 'desc' : 'asc' }}">
+                            </form>
                         </div>
                     </div>
                 </section>
@@ -181,7 +216,7 @@
 
         </div>
         <nav aria-label="..." class="pt-0">
-            {{ $agents->links() }}
+            {{ $agents->appends(request()->query())->links() }}
         </nav>
     </div>
 </section>

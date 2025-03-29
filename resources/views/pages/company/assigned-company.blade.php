@@ -53,15 +53,15 @@
 
                         @if(auth()->user()->id === $company->leader_id)
                         <div class="buttons">
-                            <a href="{{ route('companies.edit', $company->id) }}" class="btn btn-warning" >Editează</a>
+                            <a href="{{ route('companies.edit', $company->id) }}" class="btn" style="background-color: #ffc107; color: #000; padding: 8px 16px; border-radius: 5px; font-weight: 500;">Editează</a>
 
                             <form action="{{ route('companies.destroy', $company->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Sigur vrei să ștergi această societate?')">Șterge</button>
+                                <button type="submit" class="btn" style="background-color: #dc3545; color: white; padding: 8px 16px; border-radius: 5px; font-weight: 500;" onclick="return confirm('Sigur vrei să ștergi această societate?')">Șterge</button>
                             </form>
 
-                            <a href="{{ route('companies.members', $company->id) }}" class="btn btn-primary">Vizualizează membri</a>
+                            <a href="{{ route('companies.members', $company->id) }}" class="btn" style="background-color: #274abb; color: white; padding: 8px 16px; border-radius: 5px; font-weight: 500;">Vizualizează membri</a>
                         </div>
                         @endif
 

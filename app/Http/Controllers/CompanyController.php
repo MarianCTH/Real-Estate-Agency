@@ -8,6 +8,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use App\Models\JoinRequest;
 use App\Models\Property;
+use Illuminate\Support\Facades\Hash;
+use App\Models\UserDetail;
+use Illuminate\Validation\Rules;
+
 class CompanyController extends Controller
 {
     public function index()
@@ -20,14 +24,40 @@ class CompanyController extends Controller
         return view('pages.company.assigned-company', compact('title', 'company'));
     }
 
-    public function agencies_view()
+    public function agencies_view(Request $request)
     {
         $title = 'Societați imobiliare';
 
-        $companies = Company::with(['members.properties'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        // Start query builder
+        $query = Company::with(['members.properties']);
 
+        // Search functionality
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('mobile_phone', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%");
+            });
+        }
+
+        // Sorting functionality
+        $sortBy = $request->get('sortby', 'name');
+        $sortDirection = $request->get('direction', 'asc');
+
+        switch ($sortBy) {
+            case 'properties':
+                $query->withCount(['members as properties_count' => function($query) {
+                    $query->withCount('properties');
+                }])
+                ->orderBy('properties_count', $sortDirection);
+                break;
+            default:
+                $query->orderBy($sortBy, $sortDirection);
+        }
+
+        $companies = $query->paginate(5);
         $recentProperties = Property::latest()->take(3)->get();
         $featuredProperties = Property::where('featured', true)->take(3)->get();
 
@@ -83,13 +113,6 @@ class CompanyController extends Controller
         return redirect()->route('companies.index')->with('success', 'Cererea ta de alăturare este în așteptare.');
     }
 
-
-    public function create()
-    {
-        $title = 'Creează o societate';
-
-        return view('pages.company.create-company', compact('title'));
-    }
     public function store(Request $request)
     {
         try {
@@ -117,11 +140,13 @@ class CompanyController extends Controller
             return redirect()->back()->with('error', 'Ești deja într-o societate.');
         }
 
-        $imagePath = null;
+        // Handle image upload
         if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('img/companies'), $imageName);
             $imagePath = 'img/companies/' . $imageName;
+        } else {
+            $imagePath = 'img/companies/default.png';
         }
 
         $company = Company::create([
@@ -139,8 +164,6 @@ class CompanyController extends Controller
 
         return redirect()->route('companies.index')->with('success', 'Societate creată cu succes!');
     }
-
-
 
     public function edit($id)
     {
@@ -193,8 +216,6 @@ class CompanyController extends Controller
         return redirect()->route('companies.index')->with('success', 'Compania a fost actualizată.');
     }
 
-
-
     public function destroy($id)
     {
         $company = Company::findOrFail($id);
@@ -222,6 +243,93 @@ class CompanyController extends Controller
         return view('pages.company.members', compact('company', 'title'));
     }
 
+    public function addMember($id)
+    {
+        $title = 'Adaugă membru';
+        $company = Company::findOrFail($id);
+        $user = auth()->user();
+
+        if ($user->id !== $company->leader_id) {
+            abort(403, 'Nu ai permisiunea să adaugi membri în această companie.');
+        }
+
+        return view('pages.company.add-member', compact('company', 'title'));
+    }
+
+    public function storeMember(Request $request, $id)
+    {
+        $company = Company::findOrFail($id);
+        $user = auth()->user();
+
+        if ($user->id !== $company->leader_id) {
+            abort(403, 'Nu ai permisiunea să adaugi membri în această companie.');
+        }
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+        ]);
+
+        $imagePath = 'default.png'; // Set default image
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->move(public_path('img/users'), $imageName);
+            $imagePath = $imageName;
+        }
+
+        // Create the new user
+        $newUser = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'type' => 'Agent imobiliar',
+            'image' => $imagePath,
+            'company_id' => $company->id,
+        ]);
+
+        // Create user details
+        if ($request->phone || $request->address) {
+            UserDetail::create([
+                'user_id' => $newUser->id,
+                'phone' => $request->phone,
+                'address' => $request->address,
+            ]);
+        }
+
+        return redirect()->route('companies.members', $company->id)
+            ->with('success', 'Membrul a fost adăugat cu succes!');
+    }
+
+    public function removeMember($companyId, $memberId)
+    {
+        $company = Company::find($companyId);
+        if (!$company) {
+            return redirect()->back()->with('error', 'Compania nu a fost găsită.');
+        }
+
+        if (auth()->id() !== $company->leader_id) {
+            return redirect()->back()->with('error', 'Nu ai permisiunea de a elimina membri.');
+        }
+
+        $member = User::find($memberId);
+        if (!$member) {
+            return redirect()->back()->with('error', 'Membrul nu a fost găsit.');
+        }
+
+        if ($member->company_id !== $company->id) {
+            return redirect()->back()->with('error', 'Utilizatorul nu este membru al acestei companii.');
+        }
+
+        // Delete the user account
+        $member->delete();
+
+        return redirect()->back()->with('success', 'Membrul și contul său au fost eliminate cu succes.');
+    }
+
     public function acceptMember($companyId, $userId)
     {
         $company = Company::findOrFail($companyId);
@@ -234,33 +342,6 @@ class CompanyController extends Controller
         $user->update(['company_id' => $company->id]);
 
         return redirect()->back()->with('success', 'Utilizatorul a fost acceptat.');
-    }
-    public function removeMember($companyId, $memberId)
-    {
-        $company = Company::find($companyId);
-        if (!$company) {
-            return redirect()->back()->with('error', 'Compania nu a fost găsită.');
-        }
-
-
-        if (auth()->id() !== $company->leader_id) {
-            return redirect()->back()->with('error', 'Nu ai permisiunea de a elimina membri.');
-        }
-
-        $member = User::find($memberId);
-        if (!$member) {
-            return redirect()->back()->with('error', 'Membrul nu a fost găsit.');
-        }
-
-
-        if ($member->company_id !== $company->id) {
-            return redirect()->back()->with('error', 'Utilizatorul nu este membru al acestei companii.');
-        }
-        JoinRequest::where('company_id', $company->id)->where('user_id', $memberId)->delete();
-
-        $member->update(['company_id' => null]);
-
-        return redirect()->back()->with('success', 'Membrul a fost eliminat cu succes.');
     }
 
     public function leaveCompany()
@@ -286,6 +367,7 @@ class CompanyController extends Controller
 
         return redirect()->route('dash')->with('success', 'Ai părăsit societatea cu succes.');
     }
+
     public function approveJoinRequest($companyId, $requestId)
     {
         $company = Company::findOrFail($companyId);
@@ -322,6 +404,4 @@ class CompanyController extends Controller
 
         return redirect()->route('companies.members', $company->id)->with('error', 'Cererea a fost respinsă.');
     }
-
-
 }

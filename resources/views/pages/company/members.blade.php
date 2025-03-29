@@ -38,8 +38,13 @@
                         </div>
                     @endif
 
-                    <div class="widget-boxed-header">
+                    <div class="widget-boxed-header d-flex justify-content-between align-items-center">
                         <h4>Membrii Activi</h4>
+                        @if(auth()->id() === $company->leader_id)
+                            <a href="{{ route('companies.add-member', $company->id) }}" class="btn" style="background-color: #274abb; color: white; padding: 8px 16px; border-radius: 5px; font-weight: 500;">
+                                <i class="fa fa-plus mr-1"></i> Adaugă membru
+                            </a>
+                        @endif
                     </div>
                     <div class="widget-boxed-body">
                         <div class="table-responsive">
@@ -108,71 +113,6 @@
                             </table>
                         </div>
                     </div>
-
-                    @if($company->joinRequests->where('status', 'pending')->count() > 0)
-                    <div class="widget-boxed-header mt-5">
-                        <h4>Cereri de Înscriere în Așteptare</h4>
-                    </div>
-                    <div class="widget-boxed-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Membru</th>
-                                        <th>Informații</th>
-                                        <th>Data Cererii</th>
-                                        <th>Acțiuni</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($company->joinRequests as $request)
-                                    @if($request->status === 'pending')
-                                    <tr>
-                                        <td style="width: 100px;">
-                                            <div class="agent-photo">
-                                                <img src="{{ asset('img/users/' . $request->user->image) }}" 
-                                                     alt="{{ $request->user->name }}" 
-                                                     class="img-fluid rounded-circle" 
-                                                     style="width: 80px; height: 80px; object-fit: cover;">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="agent-info">
-                                                <h6 class="mb-1">{{ $request->user->name }}</h6>
-                                                <p class="text-muted mb-0">
-                                                    <i class="fa fa-map-marker text-primary mr-1"></i>
-                                                    {{ $request->user->userDetail->address ?? 'Adresa nu este setată' }}
-                                                </p>
-                                            </div>
-                                        </td>
-                                        <td>{{ \Carbon\Carbon::parse($request->created_at)->format('d.m.Y') }}</td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                <form action="{{ route('companies.approveJoinRequest', ['company' => $company->id, 'request' => $request->id]) }}" 
-                                                      method="POST" 
-                                                      class="mr-2">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-success btn-sm">
-                                                        <i class="fa fa-check mr-1"></i> Aprobă
-                                                    </button>
-                                                </form>
-                                                <form action="{{ route('companies.rejectJoinRequest', ['company' => $company->id, 'request' => $request->id]) }}" 
-                                                      method="POST">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-danger btn-sm">
-                                                        <i class="fa fa-times mr-1"></i> Respinge
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endif
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    @endif
                 </div>
             </div>
         </div>

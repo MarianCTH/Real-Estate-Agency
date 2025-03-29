@@ -34,7 +34,7 @@
                 <x-input-label for="type" :value="__('Tip utilizator')" />
                 <select id="type" class="form-control" style="height: calc(1.5em + .75rem + 5px);" name="type">
                     <option value="Persoană fizică" {{ old('type') == 'Persoană fizică' ? 'selected' : '' }}>Persoană fizică</option>
-                    <option value="Agent imobiliar" {{ old('type') == 'Agent imobiliar' ? 'selected' : '' }}>Agent imobiliar</option>
+                    <option value="Agent imobiliar" {{ old('type') == 'Agent imobiliar' ? 'selected' : '' }}>Persoană juridică</option>
                 </select>
                 <x-input-error :messages="$errors->get('type')" class="mt-2" />
             </div>

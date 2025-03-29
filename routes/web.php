@@ -100,18 +100,16 @@ Route::middleware(['auth', 'agent'])->group(function () {
     Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
     Route::get('/companies/assign', [CompanyController::class, 'assign'])->name('companies.assign');
     Route::get('/companies/join/{company}', [CompanyController::class, 'join'])->name('companies.join');
-    Route::get('/companies/create', [CompanyController::class, 'create'])->name('companies.create');
     Route::post('/companies/store', [CompanyController::class, 'store'])->name('companies.store');
     Route::get('/companies/{company}/edit', [CompanyController::class, 'edit'])->name('companies.edit');
     Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('companies.update');
     Route::delete('/companies/{company}', [CompanyController::class, 'destroy'])->name('companies.destroy');
     Route::get('/companies/{company}/members', [CompanyController::class, 'members'])->name('companies.members');
-    Route::post('/companies/{company}/members/{user}/accept', [CompanyController::class, 'acceptMember'])->name('companies.members.accept');
+    Route::get('/companies/{company}/add-member', [CompanyController::class, 'addMember'])->name('companies.add-member');
+    Route::post('/companies/{company}/store-member', [CompanyController::class, 'storeMember'])->name('companies.store-member');
     Route::delete('/companies/{company}/members/{member}', [CompanyController::class, 'removeMember'])
-    ->name('companies.members.remove');
+        ->name('companies.members.remove');
     Route::post('/companies/leave', [CompanyController::class, 'leaveCompany'])->name('companies.leave');
-    Route::post('/companies/{company}/join-requests/{request}/approve', [CompanyController::class, 'approveJoinRequest'])->name('companies.approveJoinRequest');
-    Route::post('/companies/{company}/join-requests/{request}/reject', [CompanyController::class, 'rejectJoinRequest'])->name('companies.rejectJoinRequest');
 });
 
 Route::get('/agents', [AgentController::class, 'index'])->name('agents');

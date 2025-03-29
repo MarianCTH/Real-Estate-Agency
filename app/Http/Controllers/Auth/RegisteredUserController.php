@@ -59,10 +59,24 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'company_name' => $request->type === 'Agent imobiliar' ? $request->company_name : null,
-            'cui' => $request->type === 'Agent imobiliar' ? $request->cui : null,
-            'company_address' => $request->type === 'Agent imobiliar' ? $request->company_address : null,
         ]);
+
+        // If the user is registering as a company, create the company
+        if ($request->type === 'Agent imobiliar') {
+            $company = \App\Models\Company::create([
+                'name' => $request->company_name,
+                'cui' => $request->cui,
+                'address' => $request->company_address,
+                'email' => $request->email,
+                'mobile_phone' => $request->name, // Using the user's name as phone temporarily
+                'leader_id' => $user->id,
+                'image' => 'img/companies/default.png', // Set default company image
+            ]);
+
+            // Update the user with the company_id
+            $user->company_id = $company->id;
+            $user->save();
+        }
 
         event(new Registered($user));
 

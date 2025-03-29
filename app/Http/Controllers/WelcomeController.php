@@ -23,7 +23,7 @@ class WelcomeController extends Controller
         $agentsCount = User::where('type', 'Agent imobiliar')->count();
         $languagesCount = User::where('type', 'Persoană fizică')->count();
 
-        $lastProperties = Property::latest()->take(6)->get();
+        $lastProperties = Property::latest()->take(9)->get();
         $starredProperties = Property::where('featured', true)->latest()->take(6)->get();
         $statuses = PropertyStatus::all();  // Get all statuses
         $types = PropertyType::all();  // Get all property types
