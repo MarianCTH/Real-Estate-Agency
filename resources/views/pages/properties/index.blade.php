@@ -30,6 +30,57 @@
             text-overflow: ellipsis;
             overflow: hidden;
         }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #274abb;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .compare-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            color: #fff;
+            background-color: #dc3545;
+            border-radius: 10px;
+            margin-left: 5px;
+            position: relative;
+            top: -8px;
+        }
+
+        .text-primary {
+            color: #274abb !important;
+        }
+
+        .compare a {
+            cursor: pointer;
+            margin-right: 10px;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .compare a:hover {
+            color: #274abb;
+        }
+
+        .red-heart {
+            color: #ff0000 !important;
+        }
     </style>
     <div class="clearfix"></div>
     <!-- START SECTION PROPERTIES LISTING -->
@@ -153,10 +204,13 @@
                                         <a href="{{ route('property.show', ['id' => $property->id]) }}">{{ rtrim(rtrim(number_format($property->price, 2, ',', '.'), '0'), ',') }}€</a>
                                     </h3>
                                     <div class="compare">
-                                        <a href="#" title="Compare">
-                                            <i class="fas fa-exchange-alt"></i>
+                                        <a href="javascript:void(0);" class="mr-2 compare-link" title="Compare" 
+                                           data-id="{{ $property->id }}"
+                                           data-in-compare="{{ in_array($property->id, session('compare_list', [])) ? 'true' : 'false' }}">
+                                            <i class="flaticon-compare {{ in_array($property->id, session('compare_list', [])) ? 'text-primary' : '' }}"></i>
                                         </a>
-                                        <a href="#" title="Share">
+                                        <a href="javascript:void(0);" class="mr-2 share-link" title="Share" 
+                                           data-url="{{ route('property.show', ['id' => $property->id]) }}">
                                             <i class="fas fa-share-alt"></i>
                                         </a>
                                         <a href="javascript:void(0);" title="Favorites" class="favorite-toggle" data-id="{{ $property->id }}">
@@ -337,4 +391,112 @@
         }
     </script>
 
+    @push('scripts')
+    <script>
+    $(document).ready(function() {
+        // Function to show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('compare-toast');
+            if (toast) {
+                toast.textContent = message;
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        // Function to update comparison count in navigation
+        function updateCompareCount(count) {
+            const compareLinks = document.querySelectorAll('a[href="{{ route('property.compare') }}"]');
+            compareLinks.forEach(link => {
+                const existingCount = link.querySelector('.compare-count');
+                if (count > 0) {
+                    if (existingCount) {
+                        existingCount.textContent = count;
+                        existingCount.style.display = '';
+                    } else {
+                        const countSpan = document.createElement('span');
+                        countSpan.className = 'compare-count';
+                        countSpan.textContent = count;
+                        link.appendChild(countSpan);
+                    }
+                } else {
+                    if (existingCount) {
+                        existingCount.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        // Handle adding to comparison
+        $(document).on('click', '.compare-link', function(e) {
+            e.preventDefault();
+            const propertyId = $(this).data('id');
+            const icon = $(this).find('i.flaticon-compare');
+            const isInCompare = $(this).data('in-compare') === true;
+            
+            if (isInCompare) {
+                showToast('Această proprietate este deja în lista de comparație.');
+                return;
+            }
+            
+            $.ajax({
+                url: `/properties/${propertyId}/add-to-compare`,
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update the comparison count immediately
+                        updateCompareCount(response.count);
+                        
+                        // Update the icon state
+                        icon.addClass('text-primary');
+                        
+                        // Update the data attribute
+                        $(e.currentTarget).data('in-compare', true);
+                        
+                        // Show success message
+                        showToast(response.message || 'Proprietatea a fost adăugată la lista de comparație!');
+                    } else {
+                        showToast(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    showToast('A apărut o eroare. Vă rugăm să încercați din nou.');
+                }
+            });
+        });
+
+        // Handle share functionality
+        $(document).on('click', '.share-link', function(e) {
+            e.preventDefault();
+            const url = $(this).data('url');
+            
+            // Create a temporary input element
+            const tempInput = document.createElement('input');
+            tempInput.value = url;
+            document.body.appendChild(tempInput);
+            
+            // Select and copy the text
+            tempInput.select();
+            document.execCommand('copy');
+            
+            // Remove the temporary input
+            document.body.removeChild(tempInput);
+            
+            // Show toast notification
+            showToast('Link-ul a fost copiat!');
+        });
+    });
+    </script>
+    @endpush
+
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="compare-toast" style="display: none;">
+        Proprietatea a fost adăugată la lista de comparație!
+    </div>
 @endsection

@@ -356,8 +356,10 @@
                                                 € {{ number_format($property->price, 0, ',', '.') }}
                                             </h3>
                                             <div class="actions">
-                                                <a href="#" class="mr-2" title="Compare">
-                                                    <i class="flaticon-compare"></i>
+                                                <a href="javascript:void(0);" class="mr-2 compare-link" title="Compare" 
+                                                   data-id="{{ $property->id }}"
+                                                   data-in-compare="{{ in_array($property->id, session('compare_list', [])) ? 'true' : 'false' }}">
+                                                    <i class="flaticon-compare {{ in_array($property->id, session('compare_list', [])) ? 'text-primary' : '' }}"></i>
                                                 </a>
                                                 <a href="javascript:void(0);" class="mr-2 share-link" title="Share" 
                                                    data-url="{{ route('property.show', ['id' => $property->id]) }}">
@@ -722,8 +724,10 @@ $(priceSlider).slider({
                                                             <a href="/property/${property.id}">€ ${property.price}</a>
                                                         </h3>
                                                         <div class="compare">
-                                                            <a href="#" title="Compare">
-                                                                <i class="flaticon-compare"></i>
+                                                            <a href="javascript:void(0);" class="mr-2 compare-link" title="Compare" 
+                                                               data-id="${property.id}"
+                                                               data-in-compare="${property.is_in_compare ? 'true' : 'false'}">
+                                                                <i class="flaticon-compare ${property.is_in_compare ? 'text-primary' : ''}"></i>
                                                             </a>
                                                             <a href="#" title="Share">
                                                                 <i class="flaticon-share"></i>
@@ -1130,3 +1134,146 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 </script>
+
+<!-- Toast Notification -->
+<div class="toast-notification" id="compare-toast" style="display: none;">
+    Proprietatea a fost adăugată la lista de comparație!
+</div>
+
+@push('scripts')
+<script>
+// Wait for jQuery and the DOM to be fully loaded
+$(document).ready(function() {
+    // Function to show toast notification
+    function showToast(message) {
+        const toast = document.getElementById('compare-toast');
+        if (toast) {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2000);
+        }
+    }
+
+    // Function to update comparison count in navigation
+    function updateCompareCount(count) {
+        const compareLinks = document.querySelectorAll('a[href="{{ route('property.compare') }}"]');
+        compareLinks.forEach(link => {
+            const existingCount = link.querySelector('.compare-count');
+            if (count > 0) {
+                if (existingCount) {
+                    existingCount.textContent = count;
+                    existingCount.style.display = '';
+                } else {
+                    const countSpan = document.createElement('span');
+                    countSpan.className = 'compare-count';
+                    countSpan.textContent = count;
+                    link.appendChild(countSpan);
+                }
+            } else {
+                if (existingCount) {
+                    existingCount.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    // Handle adding to comparison
+    $(document).on('click', '.compare-link', function(e) {
+        e.preventDefault();
+        const propertyId = $(this).data('id');
+        const icon = $(this).find('i.flaticon-compare');
+        const isInCompare = $(this).data('in-compare') === true;
+        
+        if (isInCompare) {
+            showToast('Această proprietate este deja în lista de comparație.');
+            return;
+        }
+        
+        $.ajax({
+            url: `/properties/${propertyId}/add-to-compare`,
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Update the comparison count immediately
+                    updateCompareCount(response.count);
+                    
+                    // Update the icon state
+                    icon.addClass('text-primary');
+                    
+                    // Update the data attribute
+                    $(e.currentTarget).data('in-compare', true);
+                    
+                    // Show success message
+                    showToast(response.message || 'Proprietatea a fost adăugată la lista de comparație!');
+                } else {
+                    showToast(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                showToast('A apărut o eroare. Vă rugăm să încercați din nou.');
+            }
+        });
+    });
+
+    // Handle share functionality
+    const shareButtons = document.querySelectorAll('.share-link');
+    const toast = document.getElementById('toast');
+
+    shareButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            
+            // Create a temporary input element
+            const tempInput = document.createElement('input');
+            tempInput.value = url;
+            document.body.appendChild(tempInput);
+            
+            // Select and copy the text
+            tempInput.select();
+            document.execCommand('copy');
+            
+            // Remove the temporary input
+            document.body.removeChild(tempInput);
+            
+            // Show the toast notification
+            toast.style.display = 'block';
+            
+            // Remove the toast after animation
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2000);
+        });
+    });
+
+    // Handle property type icons
+    const icons = document.querySelectorAll('.property-type-icon');
+    const input = document.getElementById('selected-property-type');
+    
+    icons.forEach(icon => {
+        icon.addEventListener('click', function() {
+            // If this icon is already selected, deselect it
+            if (this.classList.contains('selected')) {
+                this.classList.remove('selected');
+                input.value = ''; // Clear the input value
+            } else {
+                // Remove selected class from all icons
+                icons.forEach(i => i.classList.remove('selected'));
+                
+                // Add selected class to clicked icon
+                this.classList.add('selected');
+                
+                // Update hidden input value
+                input.value = this.dataset.type;
+            }
+        });
+    });
+});
+</script>
+@endpush

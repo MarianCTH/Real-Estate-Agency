@@ -42,8 +42,65 @@
         .red-heart {
             color: red !important;
         }
+
+        .compare-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            color: #fff;
+            background-color: #dc3545;
+            border-radius: 10px;
+            margin-left: 5px;
+            position: relative;
+            top: -8px;
+        }
+
+        /* Fix for navigation alignment */
+        .navigation li a {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            position: relative;
+        }
+
+        /* Ensure proper spacing in navigation */
+        .navigation > ul > li {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Hide empty comparison count */
+        .compare-count:empty {
+            display: none;
+        }
     </style>
     @yield('includes')
+    <script>
+        // Global function to update comparison count
+        function updateCompareCount(count) {
+            const compareLinks = $('a[href="{{ route('property.compare') }}"]');
+            compareLinks.each(function() {
+                const compareLink = $(this);
+                const existingCount = compareLink.find('.compare-count');
+                
+                if (count > 0) {
+                    if (existingCount.length) {
+                        existingCount.text(count);
+                    } else {
+                        compareLink.append(`<span class="compare-count">${count}</span>`);
+                    }
+                } else {
+                    existingCount.remove();
+                }
+            });
+        }
+    </script>
 </head>
 
 <body class="@yield('body-class', 'inner-pages listing st-1 agents hd-white')">
@@ -57,6 +114,26 @@
         @include('partials.footer')
     </div>
 
+    <!-- ARCHIVES JS -->
+    <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/tether.min.js') }}"></script>
+    <script src="{{ asset('js/moment.js') }}"></script>
+    <script src="{{ asset('js/mmenu.min.js') }}"></script>
+    <script src="{{ asset('js/mmenu.js') }}"></script>
+    <script src="{{ asset('js/aos.js') }}"></script>
+    <script src="{{ asset('js/aos2.js') }}"></script>
+    <script src="{{ asset('js/jquery.form.js') }}"></script>
+    <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('js/leaflet.js') }}"></script>
+    <script src="{{ asset('js/leaflet-gesture-handling.min.js') }}"></script>
+    <script src="{{ asset('js/leaflet-providers.js') }}"></script>
+    <script src="{{ asset('js/leaflet.markercluster.js') }}"></script>
+    <script src="{{ asset('js/map-single.js') }}"></script>
+    <script src="{{ asset('js/color-switcher.js') }}"></script>
+    <script src="{{ asset('js/inner.js') }}"></script>
+
+    @stack('scripts')
 </body>
 
 </html>

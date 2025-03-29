@@ -108,11 +108,12 @@
     padding: 8px 15px;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    color: #3B5998;
 }
 
 .button.border i {
     font-size: 14px;
+    margin-right: 5px;
 }
 
 .header-widget.sign-in a {
@@ -148,5 +149,26 @@
 .header-user-menu ul li a:hover {
     background-color: #f8f9fa;
     color: #3B5998;
+}
+
+.compare-count {
+    background: #e54242;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    margin-left: 5px;
+    display: inline-block;
+    min-width: 18px;
+    text-align: center;
+}
+
+.header-widget {
+    display: inline-flex;
+    align-items: center;
+}
+
+.ml-3 {
+    margin-left: 1rem;
 }
 </style>

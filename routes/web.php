@@ -119,6 +119,12 @@ Route::get('/user/{user}/properties', [PropertyController::class, 'userPropertie
 
 Route::get('/properties', [PropertyController::class, 'index'])->name('properties');
 
+// Property comparison routes
+Route::post('/properties/{id}/add-to-compare', [PropertyController::class, 'addToCompare'])->name('property.add-to-compare');
+Route::post('/properties/{id}/remove-from-compare', [PropertyController::class, 'removeFromCompare'])->name('property.remove-from-compare');
+Route::get('/properties/compare', [PropertyController::class, 'compare'])->name('property.compare');
+Route::post('/properties/clear-compare', [PropertyController::class, 'clearCompare'])->name('property.clear-compare');
+
 Route::get('/get_properties', [PropertyController::class, 'get_properties']);
 
 Route::get('/properties/{id}', [PropertyController::class, 'show'])->name('property.show');

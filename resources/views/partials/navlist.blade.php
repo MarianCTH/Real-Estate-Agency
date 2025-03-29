@@ -20,15 +20,19 @@
     </ul>
 </li>
 
-
-
 <li><a href="#">Rețea imobiliară</a>
     <ul>
         <li><a href="{{ route('agents') }}">Agenți imobiliari</a></li>
-
-        <li><a href="{{ route('agencies') }}">Societăți imobiliare</a>
+        <li><a href="{{ route('agencies') }}">Societăți imobiliare</a></li>
     </ul>
 </li>
+
+<li><a href="{{ route('property.compare') }}">
+    Compară
+    <span class="compare-count" style="{{ !session()->has('compare_list') || count(session('compare_list', [])) === 0 ? 'display: none;' : '' }}">
+        {{ count(session('compare_list', [])) }}
+    </span>
+</a></li>
 <li><a href="{{ route('contact') }}">Contact</a></li>
 <li class="d-none d-xl-none d-block d-lg-block"><a href="{{ route('login') }}">Intră în cont</a></li>
 <li class="d-none d-xl-none d-block d-lg-block"><a href="{{ route('register') }}">Cont nou</a></li>

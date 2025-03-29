@@ -175,28 +175,25 @@ class PropertyController extends Controller
         }
     
         if ($request->filled('location')) {
-            // Assuming location_id is the field to filter
             $query->whereHas('location', function ($q) use ($request) {
                 $q->where('name', $request->input('location'));
             });
         }
     
         if ($request->filled('beds')) {
-            // Filter based on bedrooms (assuming your column name is 'bedrooms')
             $query->where('bedrooms', $request->input('beds'));
         }
     
         if ($request->filled('baths')) {
-            // Filter based on bathrooms (assuming your column name is 'bathrooms')
             $query->where('bathrooms', $request->input('baths'));
         }
     
         if ($request->filled('areaMin')) {
-            $query->where('size', '>=', $request->input('areaMin'));  // Assuming 'size' is the area
+            $query->where('size', '>=', $request->input('areaMin'));
         }
     
         if ($request->filled('areaMax')) {
-            $query->where('size', '<=', $request->input('areaMax'));  // Assuming 'size' is the area
+            $query->where('size', '<=', $request->input('areaMax'));
         }
     
         if ($request->filled('priceMin')) {
@@ -210,19 +207,15 @@ class PropertyController extends Controller
         // Fetch filtered properties
         $properties = $query->get();
     
-        // Add 'is_favorited' field for authenticated users
-        if ($user) {
-            $favoriteIds = $user->favorites->pluck('id')->toArray();
-            $properties->transform(function ($property) use ($favoriteIds) {
-                $property->is_favorited = in_array($property->id, $favoriteIds);
-                return $property;
-            });
-        } else {
-            $properties->transform(function ($property) {
-                $property->is_favorited = false;
-                return $property;
-            });
-        }
+        // Get the current comparison list from session
+        $compareList = session('compare_list', []);
+    
+        // Add 'is_favorited' and 'is_in_compare' fields for each property
+        $properties->transform(function ($property) use ($user, $compareList) {
+            $property->is_favorited = $user ? $user->favorites->contains($property->id) : false;
+            $property->is_in_compare = in_array($property->id, $compareList);
+            return $property;
+        });
     
         return response()->json($properties);
     }
@@ -491,5 +484,80 @@ class PropertyController extends Controller
         $property->delete();
 
         return redirect()->route('my-properties')->with('success', 'Property deleted successfully!');
+    }
+
+    // Property comparison methods
+    public function addToCompare(Request $request, $id)
+    {
+        $compareList = session('compare_list', []);
+        
+        if (in_array($id, $compareList)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Această proprietate este deja în lista de comparație.'
+            ]);
+        }
+
+        if (count($compareList) >= 3) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Puteți compara maxim 3 proprietăți.'
+            ]);
+        }
+
+        $compareList[] = $id;
+        session(['compare_list' => $compareList]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Proprietatea a fost adăugată la comparație.',
+            'count' => count($compareList)
+        ]);
+    }
+
+    public function removeFromCompare(Request $request, $id)
+    {
+        try {
+            $compareList = session('compare_list', []);
+            $compareList = array_values(array_diff($compareList, [$id]));
+            session(['compare_list' => $compareList]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Proprietatea a fost eliminată din comparație.',
+                'count' => count($compareList)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'A apărut o eroare la eliminarea proprietății din comparație.'
+            ], 500);
+        }
+    }
+
+    public function compare()
+    {
+        $compareList = session('compare_list', []);
+        $properties = Property::whereIn('id', $compareList)->get();
+        
+        return view('pages.properties.compare', compact('properties'));
+    }
+
+    public function clearCompare(Request $request)
+    {
+        try {
+            session()->forget('compare_list');
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Lista de comparație a fost ștearsă.',
+                'count' => 0
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'A apărut o eroare la ștergerea listei de comparație.'
+            ], 500);
+        }
     }
 }

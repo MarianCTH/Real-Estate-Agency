@@ -68,7 +68,6 @@ header.fullwidth .container {
 }
 .left-side {
     float: left;
-    width: 820px;
     display: inline-block;
 }
 .right-side {
