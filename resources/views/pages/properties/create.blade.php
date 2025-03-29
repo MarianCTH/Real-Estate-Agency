@@ -337,20 +337,12 @@
             <h3>Locația proprietății</h3>
             <div class="property-form-group">
                 <div class="row">
-                    <div class="col-lg-6 col-md-12">
+                    <div class="col-lg-12 col-md-12">
                         <p>
                             <label for="location">Adresă</label>
                             <input type="text" name="location" placeholder="Adresa proprietății" id="location">
                         </p>
                         <div class="alert alert-danger" id="location-error" style="display:none;"></div>
-
-                    </div>
-                    <div class="col-lg-6 col-md-12">
-                        <p>
-                            <label for="city">Oraș</label>
-                            <input type="text" name="city" placeholder="ex. Bistrita" id="city">
-                        </p>
-                        <div class="alert alert-danger" id="city-error" style="display:none;"></div>
 
                     </div>
                 </div>
@@ -385,35 +377,29 @@
         <div class="single-add-property">
             <h3>Informații de contact</h3>
             <div class="property-form-group">
+                <div class="alert alert-info">
+                    Pentru a actualiza informațiile de contact, vă rugăm să accesați <a href="{{ route('profile') }}" class="text-primary">pagina de profil</a>.
+                </div>
                 <div class="row">
                     <div class="col-lg-6 col-md-12">
                         <p>
                             <label for="con-name">Nume</label>
-                            <input type="text" placeholder="Introduceți numele" id="con-name" name="con-name"
-                                value="{{ old('con-name', $user->name ?? '') }}">
+                            <input type="text" id="con-name" name="con-name" value="{{ $user->name ?? '' }}" readonly class="form-control bg-light">
                         </p>
-                        <div class="alert alert-danger" id="con-name-error" style="display:none;"></div>
-
                     </div>
                     <div class="col-lg-6 col-md-12">
                         <p class="no-mb first">
                             <label for="con-email">Email</label>
-                            <input type="email" placeholder="Introduceți email-ul" id="con-email" name="con-email"
-                                value="{{ old('con-email', $user->email) }}">
+                            <input type="email" id="con-email" name="con-email" value="{{ $user->email }}" readonly class="form-control bg-light">
                         </p>
-                        <div class="alert alert-danger" id="con-email-error" style="display:none;"></div>
-
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-6 col-md-12">
                         <p class="no-mb last">
                             <label for="con-phn">Telefon</label>
-                            <input type="text" placeholder="Număr de telefon" id="con-phn" name="con-phn"
-                                value="{{ old('con-phn', $userDetails->phone ?? '') }}">
+                            <input type="text" id="con-phn" name="con-phn" value="{{ $userDetails->phone ?? '' }}" readonly class="form-control bg-light">
                         </p>
-                        <div class="alert alert-danger" id="con-phn-error" style="display:none;"></div>
-
                     </div>
                 </div>
             </div>
@@ -627,8 +613,13 @@
                     formData.append('property_id', propertyId);
                 });
                 this.on('success', function(file, response) {
-                    file.filename = response.filename;
-                    console.log('Image uploaded successfully:', response.filename);
+                    if (response.success && response.filename) {
+                        file.filename = response.filename;
+                        // If this is the main image, update the hidden input
+                        if (file.previewElement.classList.contains('main-photo')) {
+                            document.getElementById('main_image').value = response.filename;
+                        }
+                    }
                 });
                 this.on('error', function(file, response) {
                     console.error('Image upload error:', response);
@@ -679,60 +670,248 @@
 
                     if (file.previewElement) {
                         file.previewElement.classList.add("main-photo");
+                        // If the file has already been uploaded, update the hidden input
+                        if (file.filename) {
+                            document.getElementById('main_image').value = file.filename;
+                        }
                     }
-
-                    document.getElementById('main_image').value = file.name;
                 }
             }
         });
     </script>
 
     <script>
-        document.getElementById('create-property-btn').addEventListener('click', function(event) {
-            event.preventDefault();
-            let formData = new FormData(document.getElementById('property-form'));
-            console.log(formData)
-            $.ajax({
-                url: "{{ route('properties.store') }}",
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.property_id) {
-                        document.getElementById('property_id').value = response.property_id;
-
-                        tempId = response.property_id;
-                        dropzone.processQueue();
-
-                        let successMessage = document.createElement('div');
-                        successMessage.className = 'alert alert-success';
-                        successMessage.textContent = 'Anunțul a fost postat cu success!';
-                        document.querySelector('.add-property-button').prepend(successMessage);
-
-                        setTimeout(function() {
-                            window.location.href =
-                                "{{ route('my-properties') }}";
-                        }, 2000); // Redirect after 2 seconds
-                    }
-                },
-                error: function(response) {
-                    let errors = response.responseJSON.errors;
-
-                    // Display errors
-                    if (errors) {
-                        Object.keys(errors).forEach(function(key) {
-                            let errorElement = document.getElementById(`${key}-error`);
-                            if (errorElement) {
-                                errorElement.textContent = errors[key][
-                                    0
-                                ]; // Show first validation error
-                                errorElement.style.display =
-                                    'block'; // Display the error message container
-                            }
-                        });
-                    }
+        // Price formatting and form validation
+        $(document).ready(function() {
+            const priceInput = $('input[name="price"]');
+            const form = $('#property-form');
+            const descriptionField = $('#description');
+            
+            // Format price input as user types
+            priceInput.on('input', function() {
+                let value = $(this).val().replace(/[^0-9]/g, '');
+                if (value) {
+                    value = parseInt(value, 10);
+                    $(this).val(value.toLocaleString('ro-RO'));
                 }
+            });
+
+            // Form validation function
+            function validateForm() {
+                let isValid = true;
+                $('.alert-danger').hide().text('');
+
+                // Validate description field
+                const description = descriptionField.val().trim();
+                if (!description) {
+                    $('#description-error').text('Descrierea proprietății este obligatorie.').show();
+                    isValid = false;
+                }
+
+                // Validate title field
+                const title = $('input[name="title"]').val().trim();
+                if (!title) {
+                    $('#title-error').text('Titlul proprietății este obligatoriu.').show();
+                    isValid = false;
+                }
+
+                // Validate price field
+                const price = priceInput.val().replace(/[^0-9]/g, '');
+                if (!price) {
+                    $('#price-error').text('Prețul proprietății este obligatoriu.').show();
+                    isValid = false;
+                }
+
+                // Validate size field
+                const size = $('input[name="size"]').val().trim();
+                if (!size) {
+                    $('#size-error').text('Suprafața proprietății este obligatorie.').show();
+                    isValid = false;
+                }
+
+                // Validate location fields
+                const location = $('input[name="location"]').val().trim();
+                if (!location) {
+                    $('#location-error').text('Adresa proprietății este obligatorie.').show();
+                    isValid = false;
+                }
+
+                // Check if at least one image is uploaded
+                if (dropzone.files.length === 0) {
+                    $('#main_image-error').text('Trebuie să încărcați cel puțin o imagine.').show();
+                    isValid = false;
+                }
+
+                // Check if location is selected on map
+                const latitude = $('#latitude').val();
+                const longitude = $('#longitude').val();
+                if (!latitude || !longitude) {
+                    $('#location-error').text('Vă rugăm să selectați locația proprietății pe hartă.').show();
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            // Form submission handling
+            form.on('submit', function(e) {
+                e.preventDefault();
+
+                // Clear all previous error messages
+                $('.alert-danger').hide().text('');
+
+                if (!validateForm()) {
+                    return false;
+                }
+
+                // Clean up price before form submission
+                let cleanPrice = priceInput.val().replace(/[^0-9]/g, '');
+                priceInput.val(cleanPrice);
+
+                // Create FormData object
+                const formData = new FormData(this);
+
+                // Ensure description is included
+                formData.set('description', descriptionField.val().trim());
+
+                // Log form data for debugging
+                console.log('Form data entries:');
+                for (let pair of formData.entries()) {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+
+                // Send AJAX request
+                $.ajax({
+                    url: "{{ route('properties.store') }}",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.property_id) {
+                            document.getElementById('property_id').value = response.property_id;
+                            
+                            // Process all files in the queue one by one
+                            let totalFiles = dropzone.files.length;
+                            let processedFiles = 0;
+                            let mainImageFile = null;
+                            let mainImageFilename = null;
+                            
+                            // Find the main image file
+                            dropzone.files.forEach(function(file) {
+                                if (file.previewElement && file.previewElement.classList.contains('main-photo')) {
+                                    mainImageFile = file;
+                                }
+                            });
+
+                            // Update success handler to track main image upload
+                            dropzone.off('success').on('success', function(file, response) {
+                                if (response.success && response.filename) {
+                                    file.filename = response.filename;
+                                    // If this is the main image, store its filename
+                                    if (file.previewElement.classList.contains('main-photo')) {
+                                        mainImageFilename = response.filename;
+                                    }
+                                }
+                            });
+                            
+                            function processNextFile() {
+                                if (processedFiles < totalFiles) {
+                                    let currentFile = dropzone.files[processedFiles];
+                                    dropzone.processFile(currentFile);
+                                    processedFiles++;
+                                } else {
+                                    // All files processed, update main image in database
+                                    if (mainImageFilename) {
+                                        $.ajax({
+                                            url: "{{ url('/property') }}/" + response.property_id,
+                                            type: "POST",
+                                            data: {
+                                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                                _method: 'PUT',
+                                                main_image: mainImageFilename,
+                                                title: $('input[name="title"]').val(),
+                                                description: $('#description').val(),
+                                                status_id: $('select[name="status_id"]').val(),
+                                                type_id: $('select[name="type_id"]').val(),
+                                                bedrooms: $('select[name="bedrooms"]').val(),
+                                                price: $('input[name="price"]').val(),
+                                                size: $('input[name="size"]').val(),
+                                                garages: $('select[name="garages"]').val(),
+                                                bathrooms: $('select[name="bathrooms"]').val(),
+                                                location: $('input[name="location"]').val(),
+                                                latitude: $('#latitude').val(),
+                                                longitude: $('#longitude').val()
+                                            },
+                                            success: function() {
+                                                // Show success message and redirect
+                                                let successMessage = document.createElement('div');
+                                                successMessage.className = 'alert alert-success';
+                                                successMessage.textContent = 'Anunțul a fost postat cu success!';
+                                                document.querySelector('.add-property-button').prepend(successMessage);
+
+                                                setTimeout(function() {
+                                                    window.location.href = "{{ route('my-properties') }}";
+                                                }, 2000);
+                                            },
+                                            error: function(xhr, status, error) {
+                                                console.error('Error updating main image:', error);
+                                                console.log('Main image filename:', mainImageFilename);
+                                                // Still redirect as the property and images were created
+                                                window.location.href = "{{ route('my-properties') }}";
+                                            }
+                                        });
+                                    } else {
+                                        console.error('No main image filename found after uploads');
+                                        // No main image or upload failed, just redirect
+                                        let successMessage = document.createElement('div');
+                                        successMessage.className = 'alert alert-success';
+                                        successMessage.textContent = 'Anunțul a fost postat cu success!';
+                                        document.querySelector('.add-property-button').prepend(successMessage);
+
+                                        setTimeout(function() {
+                                            window.location.href = "{{ route('my-properties') }}";
+                                        }, 2000);
+                                    }
+                                }
+                            }
+
+                            // Start processing files
+                            dropzone.off('complete').on('complete', function(file) {
+                                if (file.status === 'success') {
+                                    processNextFile();
+                                }
+                            });
+
+                            // Start with the first file
+                            processNextFile();
+                        }
+                    },
+                    error: function(response) {
+                        // Reformat price back to localized string
+                        priceInput.val(parseInt(cleanPrice).toLocaleString('ro-RO'));
+
+                        if (response.status === 422) {
+                            let errors = response.responseJSON.errors;
+                            // Display validation errors
+                            if (errors) {
+                                Object.keys(errors).forEach(function(key) {
+                                    let errorElement = document.getElementById(`${key}-error`);
+                                    if (errorElement) {
+                                        errorElement.textContent = errors[key][0];
+                                        errorElement.style.display = 'block';
+                                    }
+                                });
+                            }
+                        } else {
+                            // Handle other types of errors
+                            alert('A apărut o eroare. Vă rugăm să încercați din nou.');
+                        }
+                    }
+                });
             });
         });
     </script>

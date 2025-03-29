@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'company_name' => ['nullable', 'string', 'max:255', 'required_if:type,Agent imobiliar'],
+            'company_name' => ['nullable', 'string', 'max:255', 'required_if:type,Agent imobiliar', 'unique:companies,name'],
             'cui' => ['nullable', 'string', 'max:20', 'required_if:type,Agent imobiliar'],
             'company_address' => ['nullable', 'string', 'max:255', 'required_if:type,Agent imobiliar'],
             'check' => ['accepted'],
@@ -49,6 +49,7 @@ class RegisteredUserController extends Controller
             'password.required' => 'Parola este obligatorie.',
             'password.confirmed' => 'Parolele nu coincid.',
             'company_name.required_if' => 'Numele companiei este obligatoriu pentru utilizatorii juridici.',
+            'company_name.unique' => 'Această companie există deja în sistem. Vă rugăm să alegeți un alt nume.',
             'cui.required_if' => 'CUI-ul este obligatoriu pentru utilizatorii juridici.',
             'company_address.required_if' => 'Adresa companiei este obligatorie pentru utilizatorii juridici.',
             'check.accepted' => 'Trebuie să accepți termenii și condițiile pentru a continua.',
@@ -68,7 +69,7 @@ class RegisteredUserController extends Controller
                 'cui' => $request->cui,
                 'address' => $request->company_address,
                 'email' => $request->email,
-                'mobile_phone' => $request->name, // Using the user's name as phone temporarily
+                'mobile_phone' => null, // Set to null instead of using user's name
                 'leader_id' => $user->id,
                 'image' => 'img/companies/default.png', // Set default company image
             ]);

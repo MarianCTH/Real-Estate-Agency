@@ -29,7 +29,7 @@
                     </div>
                 </td>
                 <td>{{ $property->created_at->format('m.d.Y') }}</td>
-                <td>€{{ $property->price }}</td>
+                <td>{{ rtrim(rtrim(number_format($property->price, 2, ',', '.'), '0'), ',') }}€</td>
                 <td>
                 <form action="{{ route('favorites.destroy', $property->id) }}" method="POST" style="display:inline;">
                     @csrf

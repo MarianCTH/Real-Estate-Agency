@@ -32,6 +32,11 @@ jQuery(document).on('ready', function ($) {
      ----------------------------------*/
     var tpj = jQuery;
     var revapi18;
+    if (typeof revslider_showDoubleJqueryError === 'undefined') {
+        function revslider_showDoubleJqueryError(sliderID) {
+            console.warn("Revolution Slider Error: Double jQuery Error");
+        }
+    }
     if (tpj("#rev_slider_18_1").revolution === undefined) {
         revslider_showDoubleJqueryError("#rev_slider_18_1");
     } else {
@@ -365,6 +370,19 @@ jQuery(document).on('ready', function ($) {
     ----------------------------------------------*/
     $('.filter-toggle').on('click', function () {
         $(this).parent().find('form').stop(true, true).slideToggle();
+    });
+
+    /*----------------------------------
+    //------ FORM SUBMISSION ------//
+    -----------------------------------*/
+    $(document).on('submit', 'form', function(e) {
+        // Format price input before submission
+        var priceInput = $(this).find('input[name="price"]');
+        if (priceInput.length) {
+            // Remove any non-numeric characters
+            var cleanPrice = priceInput.val().replace(/[^0-9]/g, '');
+            priceInput.val(cleanPrice);
+        }
     });
 
     /*----------------------------------

@@ -43,7 +43,7 @@
                                 <div class="homes">
                                     <!-- homes img -->
                                     <a href="{{ route('property.show', ['id' => $property->id]) }}" class="homes-img">
-                                        <div class="homes-price">{{ $property->price }} EUR</div>
+                                        <div class="homes-price">{{ rtrim(rtrim(number_format($property->price, 2, ',', '.'), '0'), ',') }}€</div>
                                         <img src="{{ asset('img/properties/' . $property->id . '/' . $property->image) }}"
                                             alt="{{ $property->title }}" class="img-responsive">
                                     </a>

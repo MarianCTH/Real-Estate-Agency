@@ -251,6 +251,7 @@
                     <div class="form-group categories">
                         <label for="bedrooms">Camere</label>
                         <select name="bedrooms" class="form-control wide">
+                            <option value="">Selectați</option>
                             @for ($i = 1; $i <= 5; $i++)
                                 <option value="{{ $i }}" {{ $property->bedrooms == $i ? 'selected' : '' }}>{{ $i }}</option>
                             @endfor
@@ -391,7 +392,7 @@
 <script>
 let dropzone = new Dropzone("#dropzone", {
     url: '{{ route('uploadImages') }}',
-    autoProcessQueue: false,
+    autoProcessQueue: true,
     maxFilesize: 5,
     acceptedFiles: 'image/*',
     addRemoveLinks: true,
@@ -402,8 +403,7 @@ let dropzone = new Dropzone("#dropzone", {
     },
     init: function() {
         let deletedFiles = [];
-        this.element.classList.remove('dz-started');
-        this.element.classList.remove('dz-processing');
+        let dropzoneInstance = this;
         
         this.on('sending', function(file, xhr, formData) {
             let propertyId = document.getElementById('property_id').value;
@@ -411,68 +411,74 @@ let dropzone = new Dropzone("#dropzone", {
         });
 
         this.on('success', function(file, response) {
-            file.filename = response.filename;
-            this.element.classList.remove('dz-processing');
-            
-            if (!file.previewElement.querySelector('.dz-set-main-btn')) {
-                let setMainButton = document.createElement('button');
-                setMainButton.className = 'dz-set-main-btn';
-                setMainButton.innerHTML = 'Imagine Principală';
-                setMainButton.onclick = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
+            if (response.success && response.filename) {
+                file.filename = response.filename;
+                file.name = response.filename;
+                
+                if (!file.previewElement.querySelector('.dz-set-main-btn')) {
+                    let setMainButton = document.createElement('button');
+                    setMainButton.className = 'dz-set-main-btn';
+                    setMainButton.innerHTML = 'Imagine Principală';
+                    setMainButton.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setMainImage(file);
+                    };
+                    file.previewElement.appendChild(setMainButton);
+                }
+
+                if (dropzoneInstance.files.length === 1) {
                     setMainImage(file);
-                };
-                file.previewElement.appendChild(setMainButton);
+                }
             }
         });
 
         this.on('error', function(file, response) {
+            console.error('Upload error:', response);
             this.element.classList.remove('dz-processing');
         });
 
         this.on('addedfile', function(file) {
-            if (!file.previewElement.querySelector('.dz-set-main-btn')) {
-                let setMainButton = document.createElement('button');
-                setMainButton.className = 'dz-set-main-btn';
-                setMainButton.innerHTML = 'Imagine Principală';
-                setMainButton.onclick = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setMainImage(file);
-                };
-                file.previewElement.appendChild(setMainButton);
-            }
-
-            if (this.files.length === 1) {
-                setMainImage(file);
+            if (!file.filename) {
+                if (!file.previewElement.querySelector('.dz-set-main-btn')) {
+                    let setMainButton = document.createElement('button');
+                    setMainButton.className = 'dz-set-main-btn';
+                    setMainButton.innerHTML = 'Imagine Principală';
+                    setMainButton.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setMainImage(file);
+                    };
+                    file.previewElement.appendChild(setMainButton);
+                }
             }
         });
 
-        // Handle file removal
         this.on('removedfile', function(file) {
             let propertyId = document.getElementById('property_id').value;
-            let filename = file.name || file.filename;
+            let filename = file.filename || file.name;
             
-            // Add the filename to deletedFiles array
-            if (!deletedFiles.includes(filename)) {
+            if (filename && !deletedFiles.includes(filename)) {
                 deletedFiles.push(filename);
                 document.getElementById('deleted_files').value = JSON.stringify(deletedFiles);
             }
+
+            if (document.getElementById('main_image').value === filename) {
+                document.getElementById('main_image').value = '';
+                
+                if (dropzoneInstance.files.length > 0) {
+                    setMainImage(dropzoneInstance.files[0]);
+                }
+            }
         });
 
-        // Add form submit handler
         document.getElementById('property-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Update the deleted_files input with the current list of deleted files
             document.getElementById('deleted_files').value = JSON.stringify(deletedFiles);
             
-            // Submit the form
             this.submit();
         });
-
-        let dropzoneInstance = this;
 
         function setMainImage(file) {
             dropzoneInstance.files.forEach(function(f) {
@@ -483,26 +489,11 @@ let dropzone = new Dropzone("#dropzone", {
 
             if (file.previewElement) {
                 file.previewElement.classList.add("main-photo");
+                let filename = file.filename || file.name;
+                document.getElementById('main_image').value = filename;
             }
-
-            let filename = file.name || file.filename;
-            document.getElementById('main_image').value = filename;
-
-            let propertyId = document.getElementById('property_id').value;
-            fetch('{{ route('setMainImage') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    property_id: propertyId,
-                    filename: filename
-                })
-            });
         }
 
-        // Load existing images
         var propertyId = document.getElementById('property_id').value;
         if (propertyId) {
             var existingImages = {!! json_encode(array_map(
@@ -510,7 +501,7 @@ let dropzone = new Dropzone("#dropzone", {
                     return [
                         'name' => basename($file),
                         'size' => filesize($file),
-                        'path' => str_replace(public_path(), '', $file)
+                        'path' => str_replace('\\', '/', str_replace(public_path(), '', $file))
                     ]; 
                 }, 
                 glob(public_path('img/properties/' . $property->id . '/*.*')) ?: []
@@ -524,7 +515,7 @@ let dropzone = new Dropzone("#dropzone", {
                     filename: file.name
                 };
                 dropzoneInstance.emit("addedfile", mockFile);
-                dropzoneInstance.emit("thumbnail", mockFile, file.path);
+                dropzoneInstance.emit("thumbnail", mockFile, "{{ asset('') }}" + file.path.replace(/^\//, ''));
                 dropzoneInstance.emit("complete", mockFile);
                 
                 if (!mockFile.previewElement.querySelector('.dz-set-main-btn')) {
@@ -546,24 +537,6 @@ let dropzone = new Dropzone("#dropzone", {
                 dropzoneInstance.files.push(mockFile);
             });
         }
-
-        this.on('processing', function() {
-            this.element.classList.add('dz-processing');
-        });
-
-        this.on('queuecomplete', function() {
-            this.element.classList.remove('dz-processing');
-            this.element.classList.remove('dz-started');
-        });
-
-        setTimeout(() => {
-            this.element.classList.remove('dz-processing');
-            this.element.classList.remove('dz-started');
-            const preloader = document.querySelector('.preloader');
-            const preloaderInner = document.querySelector('.preloader-inner');
-            if (preloader) preloader.style.display = 'none';
-            if (preloaderInner) preloaderInner.style.display = 'none';
-        }, 500);
     }
 });
 </script>

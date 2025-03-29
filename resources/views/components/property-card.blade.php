@@ -8,7 +8,7 @@
                         <div class="homes-tag button alt featured">Promovat</div>
                     @endif
                     <div class="homes-tag button alt sale">{{ $property->status->name }}</div>
-                    <div class="homes-price">{{ number_format($property->price, 3) }} €</div>
+                    <div class="homes-price">{{ rtrim(rtrim(number_format($property->price, 2, ',', '.'), '0'), ',') }}€</div>
                     <img src="{{ asset('img/properties/'  . $property->id . '/'. $property->image) }}" alt="{{ $property->title }}" class="img-responsive">
                 </a>
             </div>

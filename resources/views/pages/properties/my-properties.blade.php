@@ -32,7 +32,7 @@
                 </td>
                 <td>{{ $property->created_at->format('m.d.Y') }}</td>
                 <td>{{ $property->views }}</td>
-                <td>€{{ $property->price }}</td>
+                <td>{{ rtrim(rtrim(number_format($property->price, 2, ',', '.'), '0'), ',') }}€</td>
 
                 <td class="actions">
                     <a href="{{ route('property.edit', $property->id) }}" class="edit"><i class="lni lni-pencil"></i> Modifică</a>

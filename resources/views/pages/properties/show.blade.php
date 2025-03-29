@@ -40,11 +40,10 @@
                                     <div class="single detail-wrapper mr-2">
                                         <div class="detail-wrapper-body">
                                             <div class="listing-title-bar">
-                                                <h4>{{ $property->price }}€</h4>
+                                                <h4>{{ rtrim(rtrim(number_format($property->price, 2, ',', '.'), '0'), ',') }}€</h4>
                                                 <div class="mt-0">
                                                     <a href="#listing-location" class="listing-address">
-                                                        <p>{{ number_format($property->price / $property->size, 2) }} €
-                                                            / m2</p>
+                                                        <p>{{ rtrim(rtrim(number_format($property->price / $property->size, 2, ',', '.'), '0'), ',') }}€/m2</p>
                                                     </a>
                                                 </div>
                                             </div>
@@ -216,8 +215,7 @@
                                                             <a href="{{ route('property.show', ['id' => $otherProperty->id]) }}"
                                                                 class="listing-img-container">
                                                                 <div class="listing-badges">
-                                                                    <span
-                                                                        class="featured">{{ $otherProperty->price }} €</span>
+                                                                    <span class="featured">{{ rtrim(rtrim(number_format($otherProperty->price, 2, ',', '.'), '0'), ',') }}€</span>
                                                                     <span>{{ $property->status->name }}</span>
                                                                 </div>
                                                                 <div class="listing-img-content">

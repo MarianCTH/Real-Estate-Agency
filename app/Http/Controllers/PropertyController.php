@@ -230,102 +230,168 @@ class PropertyController extends Controller
 
     public function store(Request $request)
     {
-        $messages = [
-            'title.required' => 'Titlul proprietății este obligatoriu.',
-            'description.required' => 'Descrierea proprietății este obligatorie.',
-            'status_id.required' => 'Statusul proprietății este obligatoriu.',
-            'type_id.required' => 'Tipul proprietății este obligatoriu.',
-            'type_id.exists' => 'Tipul selectat nu este valid.',
-            'bedrooms.required' => 'Numărul de camere este obligatoriu.',
-            'bedrooms.integer' => 'Numărul de camere trebuie să fie un număr întreg.',
-            'price.required' => 'Prețul proprietății este obligatoriu.',
-            'price.numeric' => 'Prețul trebuie să fie un număr.',
-            'size.required' => 'Suprafața proprietății este obligatorie.',
-            'size.numeric' => 'Suprafața trebuie să fie un număr.',
-            'location.required' => 'Adresa proprietății este obligatorie.',
-            'location.max' => 'Adresa nu poate depăși 255 de caractere.',
-            'city.required' => 'Orașul este obligatoriu.',
-            'city.max' => 'Numele orașului nu poate depăși 255 de caractere.',
-            'latitude.numeric' => 'Latitudinea trebuie să fie un număr.',
-            'longitude.numeric' => 'Longitudinea trebuie să fie un număr.',
-            'con-name.required' => 'Numele de contact este obligatoriu.',
-            'con-name.max' => 'Numele de contact nu poate depăși 255 de caractere.',
-            'con-email.required' => 'Adresa de email este obligatorie.',
-            'con-email.email' => 'Adresa de email trebuie să fie validă.',
-            'con-email.max' => 'Adresa de email nu poate depăși 255 de caractere.',
-            'con-phn.required' => 'Numărul de telefon este obligatoriu.',
-            'con-phn.max' => 'Numărul de telefon nu poate depăși 15 caractere.',
-            'file.mimes' => 'Fișierul trebuie să fie de tipul jpg, jpeg sau png.',
-            'file.max' => 'Fișierul nu poate fi mai mare de 2048KB.',
-        ];
+        try {
+            $messages = [
+                'title.required' => 'Titlul proprietății este obligatoriu.',
+                'description.required' => 'Descrierea proprietății este obligatorie.',
+                'status_id.required' => 'Statusul proprietății este obligatoriu.',
+                'type_id.required' => 'Tipul proprietății este obligatoriu.',
+                'type_id.exists' => 'Tipul selectat nu este valid.',
+                'bedrooms.required' => 'Numărul de camere este obligatoriu.',
+                'bedrooms.integer' => 'Numărul de camere trebuie să fie un număr întreg.',
+                'price.required' => 'Prețul proprietății este obligatoriu.',
+                'price.numeric' => 'Prețul trebuie să fie un număr.',
+                'size.required' => 'Suprafața proprietății este obligatorie.',
+                'size.numeric' => 'Suprafața trebuie să fie un număr.',
+                'location.required' => 'Adresa proprietății este obligatorie.',
+                'location.max' => 'Adresa nu poate depăși 255 de caractere.',
+                'latitude.numeric' => 'Latitudinea trebuie să fie un număr.',
+                'longitude.numeric' => 'Longitudinea trebuie să fie un număr.',
+                'con-name.required' => 'Numele de contact este obligatoriu.',
+                'con-name.max' => 'Numele de contact nu poate depăși 255 de caractere.',
+                'con-email.required' => 'Adresa de email este obligatorie.',
+                'con-email.email' => 'Adresa de email trebuie să fie validă.',
+                'con-email.max' => 'Adresa de email nu poate depăși 255 de caractere.',
+                'con-phn.required' => 'Numărul de telefon este obligatoriu.',
+                'con-phn.max' => 'Numărul de telefon nu poate depăși 15 caractere.',
+            ];
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:100',
-            'description' => 'required|string',
-            'status_id' => 'required|numeric',
-            'type_id' => 'required|integer|exists:property_types,id',
-            'bedrooms' => 'required|integer',
-            'price' => 'required|numeric',
-            'size' => 'required|numeric',
-            'location' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'age' => 'nullable|string',
-            'bathrooms' => 'nullable|integer',
-            'garages' => 'nullable|integer',
-            'con-name' => 'required|string|max:255',
-            'con-email' => 'required|email|max:255',
-            'con-phn' => 'required|string|max:15',
-        ], $messages);
+            $validated = $request->validate([
+                'title' => 'required|string|max:100',
+                'description' => 'required|string',
+                'status_id' => 'required|numeric',
+                'type_id' => 'required|integer|exists:property_types,id',
+                'bedrooms' => 'nullable|integer',
+                'price' => 'required|numeric|min:0|max:9223372036854775807',
+                'size' => 'required|numeric',
+                'location' => 'required|string|max:255',
+                'latitude' => 'nullable|numeric',
+                'longitude' => 'nullable|numeric',
+                'bathrooms' => 'nullable|integer',
+                'garages' => 'nullable|integer',
+                'con-name' => 'required|string|max:255',
+                'con-email' => 'required|email|max:255',
+                'con-phn' => 'required|string|max:15',
+            ], $messages);
 
-        $validated['age'] = $validated['age'] ?? '0';
-        $validated['bathrooms'] = $validated['bathrooms'] ?? 0;
-        $validated['garages'] = $validated['garages'] ?? 0;
+            // Set default values for nullable fields
+            $validated['bathrooms'] = $validated['bathrooms'] ?? 0;
+            $validated['garages'] = $validated['garages'] ?? 0;
+            $validated['bedrooms'] = $validated['bedrooms'] ?? 0;
+            $validated['user_id'] = auth()->id();
 
-        $property = new Property();
-        $property->fill($validated);
-        $property->user_id = auth()->id();
-        $mainImage = $request->input('main_image');
-        if ($mainImage) {
-            $property->image = $mainImage;
+            // Create the property
+            $property = new Property();
+            $property->fill($validated);
+
+            // Handle main image if provided
+            if ($request->filled('main_image')) {
+                $property->image = $request->input('main_image');
+            }
+
+            // Save the property
+            $property->save();
+
+            return response()->json([
+                'property_id' => $property->id,
+                'message' => 'Anunțul a fost postat cu success!'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Property creation error: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'A apărut o eroare la salvarea proprietății.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-        $property->save();
-        return response()->json([
-            'property_id' => $property->id,
-            'message' => 'Anunțul a fost postat cu success !'
-        ]);
     }
 
     public function uploadImages(Request $request)
     {
-        $request->validate([
-            'file' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'property_id' => 'required|integer',
-        ]);
+        try {
+            // First validate the request with custom messages
+            $messages = [
+                'file.required' => 'Vă rugăm să selectați o imagine.',
+                'file.image' => 'Fișierul trebuie să fie o imagine.',
+                'file.mimes' => 'Formatul imaginii trebuie să fie: jpg, jpeg sau png.',
+                'file.max' => 'Dimensiunea imaginii nu poate depăși 2MB.',
+                'property_id.required' => 'ID-ul proprietății este obligatoriu.',
+                'property_id.integer' => 'ID-ul proprietății trebuie să fie un număr întreg.'
+            ];
 
-        $propertyId = $request->input('property_id');
-        $finalDirectory = 'img/properties/' . $propertyId;
-        $finalDirectoryPath = public_path($finalDirectory);
+            $request->validate([
+                'file' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+                'property_id' => 'required|integer',
+            ], $messages);
 
-        // Create final directory if it doesn't exist
-        if (!File::exists($finalDirectoryPath)) {
-            File::makeDirectory($finalDirectoryPath, 0755, true);
-        }
-
-        if ($file = $request->file('file')) {
-            $filename = $file->getClientOriginalName();
-            $filePath = $finalDirectoryPath . '/' . $filename;
-
-            // Save the file to the final directory
-            if ($file->move($finalDirectoryPath, $filename)) {
-                return response()->json(['success' => 'File uploaded successfully']);
-            } else {
-                return response()->json(['error' => 'Failed to upload file'], 500);
+            $propertyId = $request->input('property_id');
+            
+            // Create the base properties directory
+            $basePropertiesDir = public_path('img/properties');
+            if (!File::exists($basePropertiesDir)) {
+                if (!File::makeDirectory($basePropertiesDir, 0755, true)) {
+                    \Log::error('Failed to create base directory: ' . $basePropertiesDir);
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Nu s-a putut crea directorul pentru imagini'
+                    ], 500);
+                }
             }
-        }
 
-        return response()->json(['error' => 'No file uploaded'], 400);
+            // Create the property-specific directory
+            $propertyDir = $basePropertiesDir . '/' . $propertyId;
+            if (!File::exists($propertyDir)) {
+                if (!File::makeDirectory($propertyDir, 0755, true)) {
+                    \Log::error('Failed to create property directory: ' . $propertyDir);
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Nu s-a putut crea directorul pentru proprietate'
+                    ], 500);
+                }
+            }
+
+            // Handle the file upload
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                
+                // Generate a unique filename
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $filePath = $propertyDir . '/' . $filename;
+
+                // Move the file
+                if ($file->move($propertyDir, $filename)) {
+                    \Log::info('File uploaded successfully: ' . $filename);
+                    return response()->json([
+                        'success' => true,
+                        'filename' => $filename,
+                        'message' => 'Imaginea a fost încărcată cu succes'
+                    ]);
+                } else {
+                    \Log::error('Failed to move file to: ' . $filePath);
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Nu s-a putut încărca imaginea'
+                    ], 500);
+                }
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Nu a fost selectată nicio imagine'
+            ], 400);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation error: ' . json_encode($e->errors()));
+            return response()->json([
+                'success' => false,
+                'message' => 'Eroare de validare',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('File upload error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Eroare la încărcarea imaginii: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function favoriteProperties()

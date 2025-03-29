@@ -42,7 +42,7 @@
             <div id="juridical-fields" style="display: none;">
                 <div class="form-group">
                     <x-input-label for="company_name" :value="__('Nume companie')" />
-                    <x-text-input id="company_name" class="form-control" type="text" name="company_name" :value="old('company_name')" />
+                    <x-text-input id="company_name" class="form-control @error('company_name') is-invalid @enderror" type="text" name="company_name" :value="old('company_name')" />
                     <x-input-error :messages="$errors->get('company_name')" class="mt-2" />
                 </div>
 

@@ -150,8 +150,7 @@
                                 <!-- Price -->
                                 <div class="price-properties">
                                     <h3 class="title mt-3">
-                                        <a href="{{ route('property.show', ['id' => $property->id]) }}">€
-                                            {{ $property->price }}</a>
+                                        <a href="{{ route('property.show', ['id' => $property->id]) }}">{{ rtrim(rtrim(number_format($property->price, 2, ',', '.'), '0'), ',') }}€</a>
                                     </h3>
                                     <div class="compare">
                                         <a href="#" title="Compare">

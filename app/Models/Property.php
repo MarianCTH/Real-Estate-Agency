@@ -14,6 +14,7 @@ class Property extends Model
         'description',
         'price',
         'location',
+        'city',
         'bedrooms',
         'bathrooms',
         'garages',
@@ -27,6 +28,40 @@ class Property extends Model
         'longitude',
         'views'
     ];
+
+    protected $casts = [
+        'price' => 'integer',
+        'views' => 'integer',
+        'featured' => 'boolean'
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($property) {
+            // No need to set formatted_price as it's not in the database
+            // We'll handle price formatting in the accessor
+        });
+    }
+
+    public function setPriceAttribute($value)
+    {
+        // Remove any non-numeric characters and convert to integer
+        $cleanValue = preg_replace('/[^0-9]/', '', $value);
+        $this->attributes['price'] = (int)$cleanValue;
+    }
+
+    public function getPriceAttribute($value)
+    {
+        return (int)$value;
+    }
+
+    public function getFormattedPriceAttribute()
+    {
+        // Format the price with dots as thousand separators
+        return number_format($this->price, 0, ',', '.');
+    }
 
     public function user()
     {

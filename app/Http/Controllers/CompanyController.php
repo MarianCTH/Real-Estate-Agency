@@ -58,6 +58,7 @@ class CompanyController extends Controller
         }
 
         $companies = $query->paginate(5);
+        
         $recentProperties = Property::latest()->take(3)->get();
         $featuredProperties = Property::where('featured', true)->take(3)->get();
 
@@ -224,9 +225,16 @@ class CompanyController extends Controller
             abort(403, 'Nu ai permisiunea să ștergi această companie.');
         }
 
+        // Delete all users associated with this company
+        User::where('company_id', $company->id)->delete();
+
+        // Delete all join requests for this company
+        JoinRequest::where('company_id', $company->id)->delete();
+
+        // Delete the company
         $company->delete();
 
-        return redirect()->route('companies.index')->with('success', 'Compania a fost ștearsă.');
+        return redirect()->route('companies.index')->with('success', 'Compania și toți membrii săi au fost șterși cu succes.');
     }
 
     public function members($id)
